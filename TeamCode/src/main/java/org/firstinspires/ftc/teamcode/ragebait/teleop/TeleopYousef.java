@@ -37,7 +37,7 @@ public class TeleopYousef extends OpMode {
     boolean x_pressed = false;
     boolean isFlickerExtended = false;
     boolean square_pressed = false;
-    final double joystickBaseSpeed = 0.3f;
+    final double joystickBaseSpeed = 0.7f;//0.3f;
 
     //Elapsed Time
     private ElapsedTime buttonElapsedTime = new ElapsedTime();
@@ -125,7 +125,7 @@ public class TeleopYousef extends OpMode {
         //Elevator Motor
         if(gamepad1.right_trigger > 0.5 && !isElevatorAdd)
         {
-            currentElevatorSpeed += 0.001;
+            currentElevatorSpeed += 0.005;
             isElevatorAdd = true;
         }
         else
