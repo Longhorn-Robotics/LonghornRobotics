@@ -37,6 +37,7 @@ public class TeleopYousef extends OpMode {
     boolean x_pressed = false;
     boolean isFlickerExtended = false;
     boolean square_pressed = false;
+    final double joystickBaseSpeed = 0.3f;
 
     //Elapsed Time
     private ElapsedTime buttonElapsedTime = new ElapsedTime();
@@ -196,6 +197,22 @@ public class TeleopYousef extends OpMode {
         {
             robot.flicker.setPosition(0.17);
         }
+        //movement code (tweak later)
+        double final_throttle = 0.0f;
+        double final_strafe = 0.0f;
+        double final_yaw = 0.0f;
+
+//        double joystickMultiplier = joystickBaseSpeed + (1.0f - gamepad1.right_trigger);
+        double joystickMultiplier = joystickBaseSpeed;
+
+        final_throttle += (gamepad1.left_stick_y * joystickMultiplier);
+        final_strafe += (gamepad1.left_stick_x * joystickMultiplier);
+        final_yaw += (gamepad1.right_stick_x * joystickMultiplier);
+
+        robot.motorFL.setPower(final_throttle - final_strafe - final_yaw);
+        robot.motorBL.setPower(final_throttle + final_strafe - final_yaw);
+        robot.motorFR.setPower(-final_throttle - final_strafe - final_yaw);
+        robot.motorBR.setPower(-final_throttle + final_strafe - final_yaw);
 
         //PID Controller
 
