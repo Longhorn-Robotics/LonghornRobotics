@@ -89,13 +89,13 @@ public class TeleopLite extends OpMode {
 
         targetFlywheelSpeed = targetFlywheelPower * 2800;
 
-        currentFlywheelSpeed1 = robot.motorFlywheel1.getVelocity();
-        currentFlywheelSpeed2 = robot.motorFlywheel2.getVelocity();
+        currentFlywheelSpeed1 = robot.motorOutR.getVelocity();
+        currentFlywheelSpeed2 = robot.motorOutL.getVelocity();
 
         double fly1pid = pidFlywheel1.update(targetFlywheelSpeed, currentFlywheelSpeed1, pidElapsedTime.seconds());
         double fly2pid = pidFlywheel2.update(targetFlywheelSpeed, currentFlywheelSpeed2, pidElapsedTime.seconds());
-        robot.motorFlywheel1.setPower(fly1pid);
-        robot.motorFlywheel2.setPower(fly2pid);
+        robot.motorOutR.setPower(fly1pid);
+        robot.motorOutL.setPower(fly2pid);
         pidElapsedTime.reset();
 
         //Intake Motor
@@ -145,8 +145,8 @@ public class TeleopLite extends OpMode {
         currentElevatorSpeed = Math.max(currentElevatorSpeed, 0);
 
         //Set Powers
-        robot.elevatorMotor.setPower(-currentElevatorSpeed);
-        robot.intakeMotor.setPower(currentIntakeSpeed);
+        robot.motorElevator.setPower(-currentElevatorSpeed);
+        robot.motorIn.setPower(currentIntakeSpeed);
 
         //DATA
         telemetry.addData("Current Intake Speed: ", currentIntakeSpeed);
