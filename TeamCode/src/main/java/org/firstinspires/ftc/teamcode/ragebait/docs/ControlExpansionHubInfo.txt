@@ -1,0 +1,17 @@
+Control Hub Ports
+ - Motor Port 0: motorFR (front-right wheel)
+ - Motor Port 1: motorFL (front-left wheel)
+ - Motor Port 2: motorBR (back-right wheel)
+ - Motor Port 3: motorBL (back-left wheel)
+ - USB 3.0: Webcam 1 (webcam)
+ - Servo Port 0: kicker (feeds ball into outtake flywheels)
+ - Servo Port 1: flicker (feeds ball into kicker)
+ (All four are GoBILDA 5202 Series)
+
+Expansion Hub Ports
+ - Motor Port 0: motorOutR (right-side flywheel outtake)
+ - Motor Port 1: motorOutL (left-side flywheel outtake)
+ - Motor Port 2: motorIn (inttake motor)
+ - Motor Port 3: motorElevator (lifting flywheel)
+ (Outtake wheels are GoBILDA 5202 Series)
+ (Inttake, elevator motor wheel is GoBILDA 5203 Series)
