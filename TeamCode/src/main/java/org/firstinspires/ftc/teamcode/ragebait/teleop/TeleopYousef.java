@@ -34,10 +34,16 @@ public class TeleopYousef extends OpMode {
 
     //Buttons & Servo Extendeders
     boolean isKickerExtended = false;
-    boolean x_pressed = false;
+    boolean x_pressed_gmpd1 = false;
     boolean isFlickerExtended = false;
-    boolean square_pressed = false;
+    boolean square_pressed_gmpd1 = false;
     final double joystickBaseSpeed = 0.7f;//0.3f;
+
+    //OnOff INTAKE & OUTTAKE
+    boolean intakeOn = true;
+    boolean outtakeOn = true;
+    boolean x_pressed_gmpd2 = false;
+    boolean square_pressed_gmpd2 = false;
 
     //Elapsed Time
     private ElapsedTime buttonElapsedTime = new ElapsedTime();
@@ -95,8 +101,6 @@ public class TeleopYousef extends OpMode {
 
         double fly1pid = pidFlywheel1.update(targetFlywheelSpeed, currentFlywheelSpeed1, pidElapsedTime.seconds());
         double fly2pid = pidFlywheel2.update(targetFlywheelSpeed, currentFlywheelSpeed2, pidElapsedTime.seconds());
-        robot.motorOutR.setPower(fly1pid);
-        robot.motorOutL.setPower(fly2pid);
         pidElapsedTime.reset();
 
         //Intake Motor
@@ -145,10 +149,6 @@ public class TeleopYousef extends OpMode {
         currentElevatorSpeed = Math.min(currentElevatorSpeed, 1);
         currentElevatorSpeed = Math.max(currentElevatorSpeed, 0);
 
-        //Set Powers
-        robot.motorElevator.setPower(-currentElevatorSpeed);
-        robot.motorIn.setPower(currentIntakeSpeed);
-
         //DATA
         telemetry.addData("Current Intake Speed: ", currentIntakeSpeed);
         telemetry.addData("Current Elevator Speed: ", currentElevatorSpeed);
@@ -159,16 +159,62 @@ public class TeleopYousef extends OpMode {
         telemetry.addData("Flywheel 1 PID: ", fly1pid);
         telemetry.addData("Flywheel 2 PID: ", fly2pid);
 
+        telemetry.addData("Intake ON: ", intakeOn);
+        telemetry.addData("Outtake ON: ", outtakeOn);
+
+        //Intake Kill Button
+        if(gamepad1.circle && !x_pressed_gmpd2)
+        {
+            intakeOn = !intakeOn;
+            x_pressed_gmpd2 = true;
+        }
+        else if(!gamepad1.circle)
+        {
+            x_pressed_gmpd2 = false;
+        }
+
+        if(!intakeOn)
+        {
+            robot.motorElevator.setPower(0);
+            robot.motorIn.setPower(0);
+        }
+        else
+        {
+            robot.motorElevator.setPower(-currentElevatorSpeed);
+            robot.motorIn.setPower(currentIntakeSpeed);
+        }
+
+        //Outtake Kill Button
+        if(gamepad1.triangle && !square_pressed_gmpd2)
+        {
+            outtakeOn = !outtakeOn;
+            square_pressed_gmpd2 = true;
+        }
+        else if(!gamepad1.triangle)
+        {
+            square_pressed_gmpd2 = false;
+        }
+
+        if(!outtakeOn)
+        {
+            robot.motorOutR.setPower(0);
+            robot.motorOutL.setPower(0);
+        }
+        else
+        {
+            robot.motorOutR.setPower(fly1pid);
+            robot.motorOutL.setPower(fly2pid);
+        }
 
         //KICKER
-        if(gamepad1.cross && !x_pressed)
+        if(gamepad1.cross && !x_pressed_gmpd1)
         {
             isKickerExtended = !isKickerExtended;
             buttonElapsedTime.reset();
         } else if (buttonElapsedTime.seconds() > 0.5) {
             isKickerExtended = false;
         }
-        x_pressed = gamepad1.cross;
+        x_pressed_gmpd1 = gamepad1.cross;
 
         if(isKickerExtended)
         {
@@ -180,14 +226,14 @@ public class TeleopYousef extends OpMode {
         }
 
         //FLICKER
-        if(gamepad1.square && !square_pressed)
+        if(gamepad1.square && !square_pressed_gmpd1)
         {
             isFlickerExtended = !isFlickerExtended;
             buttonElapsedTime.reset();
         } else if (buttonElapsedTime.seconds() > 0.25) {
             isFlickerExtended = false;
         }
-        square_pressed = gamepad1.square; //MERCURIO FOR TEO
+        square_pressed_gmpd1 = gamepad1.square;
 
         if(isFlickerExtended)
         {
@@ -197,6 +243,7 @@ public class TeleopYousef extends OpMode {
         {
             robot.flicker.setPosition(0.17);
         }
+
         //movement code (tweak later)
         double final_throttle = 0.0f;
         double final_strafe = 0.0f;
@@ -213,9 +260,6 @@ public class TeleopYousef extends OpMode {
         robot.motorBL.setPower(final_throttle + final_strafe - final_yaw);
         robot.motorFR.setPower(-final_throttle - final_strafe - final_yaw);
         robot.motorBR.setPower(-final_throttle + final_strafe - final_yaw);
-
-        //PID Controller
-
 
         telemetry.addData("Flicker", isFlickerExtended);
         telemetry.update();

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.ragebait.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -54,13 +55,13 @@ public class RobotHardwareYousef {
 
         //Right Output Motor
         motorOutR = hwMap.get(DcMotorEx.class, "motorOutR");
-        motorOutR.setDirection(DcMotor.Direction.FORWARD);
+        motorOutR.setDirection(DcMotor.Direction.REVERSE);
         motorOutR.setPower(0);
         motorOutR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Left Output Motor
         motorOutL = hwMap.get(DcMotorEx.class, "motorOutL");
-        motorOutL.setDirection(DcMotor.Direction.REVERSE);
+        motorOutL.setDirection(DcMotor.Direction.FORWARD);
         motorOutL.setPower(0);
         motorOutL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
