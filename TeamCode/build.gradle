@@ -14,15 +14,27 @@
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+apply plugin: 'kotlin-android'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
 }
 
+repositories {
+    maven {
+        url "https://repo.dairy.foundation/releases"
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
+    implementation "dev.frozenmilk.dairy:Core:2.2.4"
+    implementation "dev.frozenmilk.mercurial:Mercurial:1.0.3"
 }
