@@ -1,8 +1,9 @@
 Control Hub Ports
- - Motor Port 0: motorFR (front-right wheel), Right Dead Wheel
- - Motor Port 1: motorFL (front-left wheel)
- - Motor Port 2: motorBR (back-right wheel), Perpendicular Dead Wheel
- - Motor Port 3: motorBL (back-left wheel), Left Dead Wheel
+ - Motor Port 0: motorFR (front-right wheel), Left Dead Wheel
+ - Motor Port 1: motorFL (front-left wheel) , Perpendicular Dead Wheel
+ - Motor Port 2: motorBR (back-right wheel)
+ - Motor Port 3: motorBL (back-left wheel)  , Right Dead Wheel
+ - motorBL and motorFL are reversed
  - USB 3.0: Webcam 1 (webcam)
  - Servo Port 0: kicker (feeds ball into outtake flywheels)
  - Servo Port 1: flicker (feeds ball into kicker)

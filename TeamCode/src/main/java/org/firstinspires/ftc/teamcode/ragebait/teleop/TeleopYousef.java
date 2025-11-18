@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareLite;
 import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareYousef;
 import org.firstinspires.ftc.teamcode.ragebait.utils.PIDController;
 
-@TeleOp(name = "TeleopLite", group = "Pushbot")
+@TeleOp(name = "TeleopYousef")
 public class TeleopYousef extends OpMode {
     RobotHardwareYousef robot = new RobotHardwareYousef();
 
@@ -258,8 +258,8 @@ public class TeleopYousef extends OpMode {
 
         robot.motorFL.setPower(final_throttle - final_strafe - final_yaw);
         robot.motorBL.setPower(final_throttle + final_strafe - final_yaw);
-        robot.motorFR.setPower(-final_throttle - final_strafe - final_yaw);
-        robot.motorBR.setPower(-final_throttle + final_strafe - final_yaw);
+        robot.motorFR.setPower(final_throttle + final_strafe + final_yaw);
+        robot.motorBR.setPower(final_throttle - final_strafe + final_yaw);
 
         telemetry.addData("Flicker", isFlickerExtended);
         telemetry.update();

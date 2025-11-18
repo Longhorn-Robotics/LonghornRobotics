@@ -790,6 +790,10 @@ class TranslationalTuner extends OpMode {
         }
 
         telemetryM.debug("Push the robot laterally to test the Translational PIDF(s).");
+        telemetryM.addData("P:", follower.constants.coefficientsTranslationalPIDF.P);
+        telemetryM.addData("I:", follower.constants.coefficientsTranslationalPIDF.I);
+        telemetryM.addData("D:", follower.constants.coefficientsTranslationalPIDF.D);
+        telemetryM.addData("F:", follower.constants.coefficientsTranslationalPIDF.F);
         telemetryM.update(telemetry);
     }
 }

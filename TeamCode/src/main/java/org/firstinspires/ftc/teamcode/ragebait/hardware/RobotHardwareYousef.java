@@ -34,24 +34,25 @@ public class RobotHardwareYousef {
 
         //Wheel Motors
         motorFR = hwMap.get(DcMotorEx.class, "motorFR");
-        motorFR.setDirection(DcMotor.Direction.FORWARD);
-        motorFR.setPower(0);
-        motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         motorFL = hwMap.get(DcMotorEx.class, "motorFL");
-        motorFL.setDirection(DcMotor.Direction.FORWARD);
-        motorFL.setPower(0);
-        motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         motorBR = hwMap.get(DcMotorEx.class, "motorBR");
-        motorBR.setDirection(DcMotor.Direction.FORWARD);
-        motorBR.setPower(0);
-        motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         motorBL = hwMap.get(DcMotorEx.class, "motorBL");
+        motorFR.setDirection(DcMotor.Direction.REVERSE);
+        motorFL.setDirection(DcMotor.Direction.FORWARD);
+        motorBR.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.FORWARD);
+        motorFR.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
         motorBL.setPower(0);
+        motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Right Output Motor
         motorOutR = hwMap.get(DcMotorEx.class, "motorOutR");
