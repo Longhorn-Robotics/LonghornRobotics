@@ -72,6 +72,7 @@ public class RobotHardwareYousef {
 
         motorElevator = hwMap.get(DcMotorEx.class, "motorElevator");
         motorElevator.setDirection(DcMotor.Direction.FORWARD);
+        motorElevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorElevator.setPower(0);
 
         motorIn = hwMap.get(DcMotorEx.class, "motorIn");

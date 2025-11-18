@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareLite;
 import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareYousef;
 import org.firstinspires.ftc.teamcode.ragebait.utils.PIDController;
 
+import org.firstinspires.ftc.teamcode.ragebait.utils.ButtonAction;
+
 @TeleOp(name = "TeleopYousef")
 public class TeleopYousef extends OpMode {
     RobotHardwareYousef robot = new RobotHardwareYousef();
@@ -48,6 +50,11 @@ public class TeleopYousef extends OpMode {
     //Elapsed Time
     private ElapsedTime buttonElapsedTime = new ElapsedTime();
     private ElapsedTime pidElapsedTime = new ElapsedTime();
+
+    private final ButtonAction[] buttonActions = {
+            //Kicker
+            new ButtonAction(() -> gamepad1.left_bumper, () -> isKickerExtended = !isKickerExtended),
+    };
 
     // Code to run once when the driver hits INIT
     @Override
