@@ -48,6 +48,7 @@ public class TeleopYousef extends OpMode {
     boolean square_pressed_gmpd2 = false;
     boolean normalDirection = true;
     boolean slowMode = false;
+    double directionMultiplier = 1.0;
 
     //Elapsed Time
     private ElapsedTime kickerElapsedTime = new ElapsedTime();
@@ -227,25 +228,25 @@ public class TeleopYousef extends OpMode {
 
 //        double joystickMultiplier = joystickBaseSpeed + (1.0f - gamepad1.right_trigger);
         double joystickMultiplier = joystickBaseSpeed;
-
+        //REVERSE
+        if(normalDirection) {
+            directionMultiplier = 1.0;
+        } else if (!normalDirection) {
+            directionMultiplier = -1.0;
+        }
         final_throttle += (gamepad2.left_stick_y * joystickMultiplier);
+        final_throttle *= directionMultiplier;
         final_strafe += (gamepad2.left_stick_x * joystickMultiplier);
+        final_strafe *= directionMultiplier;
         final_yaw += (gamepad2.right_stick_x * joystickMultiplier);
 
 
 
-        //REVERSE
-        if(normalDirection) {
-            robot.motorFL.setPower(final_throttle - final_strafe - final_yaw);
-            robot.motorBL.setPower(final_throttle + final_strafe - final_yaw);
-            robot.motorFR.setPower(final_throttle + final_strafe + final_yaw);
-            robot.motorBR.setPower(final_throttle - final_strafe + final_yaw);
-        } else if (!normalDirection) {
-            robot.motorBR.setPower(final_throttle - final_strafe - final_yaw);
-            robot.motorFR.setPower(final_throttle + final_strafe - final_yaw);
-            robot.motorBL.setPower(final_throttle + final_strafe + final_yaw);
-            robot.motorFL.setPower(final_throttle - final_strafe - final_yaw);
-        }
+
+        robot.motorFL.setPower(final_throttle - final_strafe - final_yaw);
+        robot.motorBL.setPower(final_throttle + final_strafe - final_yaw);
+        robot.motorFR.setPower(final_throttle + final_strafe + final_yaw);
+        robot.motorBR.setPower(final_throttle - final_strafe + final_yaw);
         //SLOWING DOWN
         if(slowMode) {
             joystickBaseSpeed = 0.3f;
