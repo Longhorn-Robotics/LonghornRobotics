@@ -48,12 +48,66 @@ public class TeleopYousef extends OpMode {
     boolean square_pressed_gmpd2 = false;
 
     //Elapsed Time
-    private ElapsedTime buttonElapsedTime = new ElapsedTime();
+    private ElapsedTime kickerElapsedTime = new ElapsedTime();
+    private ElapsedTime flickerElapsedTime = new ElapsedTime();
     private ElapsedTime pidElapsedTime = new ElapsedTime();
 
     private final ButtonAction[] buttonActions = {
+            //Increment Gun Motor
+            new ButtonAction(() -> gamepad1.dpad_up, () -> {
+                targetFlywheelPower += 0.05;
+                targetFlywheelPower = Math.min(targetFlywheelPower, 1);
+                targetFlywheelPower = Math.max(targetFlywheelPower, 0);
+            }),
+            new ButtonAction(() -> gamepad1.dpad_down, () -> {
+                targetFlywheelPower -= 0.05;
+                targetFlywheelPower = Math.min(targetFlywheelPower, 1);
+                targetFlywheelPower = Math.max(targetFlywheelPower, 0);
+            }),
+
+            //Increment Intake Motor
+            new ButtonAction(() -> gamepad1.right_bumper, () -> {
+                currentIntakeSpeed += 0.05;
+                currentIntakeSpeed = Math.min(currentIntakeSpeed, 1);
+                currentIntakeSpeed = Math.max(currentIntakeSpeed, 0);
+            }),
+            new ButtonAction(() -> gamepad1.left_bumper, () -> {
+                currentIntakeSpeed -= 0.05;
+                currentIntakeSpeed = Math.min(currentIntakeSpeed, 1);
+                currentIntakeSpeed = Math.max(currentIntakeSpeed, 0);
+            }),
+
+            //Increment Elevator Motor
+            new ButtonAction(() -> gamepad1.right_trigger > 0.5, () -> {
+                currentElevatorSpeed += 0.05;
+                currentElevatorSpeed = Math.min(currentElevatorSpeed, 1);
+                currentElevatorSpeed = Math.max(currentElevatorSpeed, 0);
+            }),
+            new ButtonAction(() -> gamepad1.left_trigger > 0.5, () -> {
+                currentElevatorSpeed -= 0.05;
+                currentElevatorSpeed = Math.min(currentElevatorSpeed, 1);
+                currentElevatorSpeed = Math.max(currentElevatorSpeed, 0);
+            }),
+
+            //Kill All Intake Button
+            new ButtonAction(() -> gamepad1.circle, () -> intakeOn = !intakeOn),
+
+            //Kill All Outtake Button
+            new ButtonAction(() -> gamepad1.triangle, () -> outtakeOn = !outtakeOn),
+
             //Kicker
-            new ButtonAction(() -> gamepad1.left_bumper, () -> isKickerExtended = !isKickerExtended),
+            new ButtonAction(() -> gamepad1.cross, () -> {
+                isKickerExtended = !isKickerExtended;
+                kickerElapsedTime.reset();
+            }),
+
+            //Flicker
+            new ButtonAction(() -> gamepad1.square, () -> {
+                isFlickerExtended = !isFlickerExtended;
+                flickerElapsedTime.reset();
+            }),
+
+
     };
 
     // Code to run once when the driver hits INIT
@@ -70,37 +124,15 @@ public class TeleopYousef extends OpMode {
     // Code to run ONCE when the driver hits PLAY
     @Override
     public void start() {
-        buttonElapsedTime.reset();
+        kickerElapsedTime.reset();
+        flickerElapsedTime.reset();
         pidElapsedTime.reset();
     }
 
     // Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
     @Override
     public void loop() {
-
-        //Gun Motor
-        if(gamepad1.dpad_up && !isGunAdd)
-        {
-            targetFlywheelPower += 0.05;
-            isGunAdd = true;
-        }
-        else if(!gamepad1.dpad_up)
-        {
-            isGunAdd = false;
-        }
-
-        if(gamepad1.dpad_down && !isGunSubtract)
-        {
-            targetFlywheelPower -= 0.05;
-            isGunSubtract = true;
-        }
-        else if(!gamepad1.dpad_down)
-        {
-            isGunSubtract = false;
-        }
-        targetFlywheelPower = Math.min(targetFlywheelPower, 1);
-        targetFlywheelPower = Math.max(targetFlywheelPower, 0);
-
+        //Flywheel PID
         targetFlywheelSpeed = targetFlywheelPower * 2800;
 
         currentFlywheelSpeed1 = robot.motorOutR.getVelocity();
@@ -109,52 +141,6 @@ public class TeleopYousef extends OpMode {
         double fly1pid = pidFlywheel1.update(targetFlywheelSpeed, currentFlywheelSpeed1, pidElapsedTime.seconds());
         double fly2pid = pidFlywheel2.update(targetFlywheelSpeed, currentFlywheelSpeed2, pidElapsedTime.seconds());
         pidElapsedTime.reset();
-
-        //Intake Motor
-        if(gamepad1.right_bumper && !isIntakeAdd)
-        {
-            currentIntakeSpeed += 0.05;
-            isIntakeAdd = true;
-        }
-        else if(!gamepad1.right_bumper)
-        {
-            isIntakeAdd = false;
-        }
-
-        if(gamepad1.left_bumper && !isIntakeSubtract)
-        {
-            currentIntakeSpeed -= 0.05;
-            isIntakeSubtract = true;
-        }
-        else if(!gamepad1.left_bumper)
-        {
-            isIntakeSubtract = false;
-        }
-        currentIntakeSpeed = Math.min(currentIntakeSpeed, 1);
-        currentIntakeSpeed = Math.max(currentIntakeSpeed, 0);
-
-        //Elevator Motor
-        if(gamepad1.right_trigger > 0.5 && !isElevatorAdd)
-        {
-            currentElevatorSpeed += 0.005;
-            isElevatorAdd = true;
-        }
-        else
-        {
-            isElevatorAdd = false;
-        }
-
-        if(gamepad1.left_trigger > 0.5 && !isElevatorSubtract)
-        {
-            currentElevatorSpeed -= 0.001;
-            isElevatorSubtract = true;
-        }
-        else
-        {
-            isElevatorSubtract = false;
-        }
-        currentElevatorSpeed = Math.min(currentElevatorSpeed, 1);
-        currentElevatorSpeed = Math.max(currentElevatorSpeed, 0);
 
         //DATA
         telemetry.addData("Current Intake Speed: ", currentIntakeSpeed);
@@ -169,17 +155,7 @@ public class TeleopYousef extends OpMode {
         telemetry.addData("Intake ON: ", intakeOn);
         telemetry.addData("Outtake ON: ", outtakeOn);
 
-        //Intake Kill Button
-        if(gamepad1.circle && !x_pressed_gmpd2)
-        {
-            intakeOn = !intakeOn;
-            x_pressed_gmpd2 = true;
-        }
-        else if(!gamepad1.circle)
-        {
-            x_pressed_gmpd2 = false;
-        }
-
+        //Intake Kill
         if(!intakeOn)
         {
             robot.motorElevator.setPower(0);
@@ -191,17 +167,7 @@ public class TeleopYousef extends OpMode {
             robot.motorIn.setPower(currentIntakeSpeed);
         }
 
-        //Outtake Kill Button
-        if(gamepad1.triangle && !square_pressed_gmpd2)
-        {
-            outtakeOn = !outtakeOn;
-            square_pressed_gmpd2 = true;
-        }
-        else if(!gamepad1.triangle)
-        {
-            square_pressed_gmpd2 = false;
-        }
-
+        //Outtake Kill
         if(!outtakeOn)
         {
             robot.motorOutR.setPower(0);
@@ -214,15 +180,6 @@ public class TeleopYousef extends OpMode {
         }
 
         //KICKER
-        if(gamepad1.cross && !x_pressed_gmpd1)
-        {
-            isKickerExtended = !isKickerExtended;
-            buttonElapsedTime.reset();
-        } else if (buttonElapsedTime.seconds() > 0.5) {
-            isKickerExtended = false;
-        }
-        x_pressed_gmpd1 = gamepad1.cross;
-
         if(isKickerExtended)
         {
             robot.kicker.setPosition(0.07); //0.55
@@ -233,15 +190,6 @@ public class TeleopYousef extends OpMode {
         }
 
         //FLICKER
-        if(gamepad1.square && !square_pressed_gmpd1)
-        {
-            isFlickerExtended = !isFlickerExtended;
-            buttonElapsedTime.reset();
-        } else if (buttonElapsedTime.seconds() > 0.25) {
-            isFlickerExtended = false;
-        }
-        square_pressed_gmpd1 = gamepad1.square;
-
         if(isFlickerExtended)
         {
             robot.flicker.setPosition(0.35);
