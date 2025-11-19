@@ -132,6 +132,9 @@ public class TeleopYousef extends OpMode {
     // Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
     @Override
     public void loop() {
+        //Button Actions
+        ButtonAction.doActions(buttonActions);
+
         //Flywheel PID
         targetFlywheelSpeed = targetFlywheelPower * 2800;
 
@@ -180,6 +183,11 @@ public class TeleopYousef extends OpMode {
         }
 
         //KICKER
+        if(kickerElapsedTime.seconds() > 0.5)
+        {
+            isKickerExtended = false;
+        }
+
         if(isKickerExtended)
         {
             robot.kicker.setPosition(0.07); //0.55
@@ -190,6 +198,11 @@ public class TeleopYousef extends OpMode {
         }
 
         //FLICKER
+        if(flickerElapsedTime.seconds() > 0.25)
+        {
+            isFlickerExtended = false;
+        }
+
         if(isFlickerExtended)
         {
             robot.flicker.setPosition(0.35);
