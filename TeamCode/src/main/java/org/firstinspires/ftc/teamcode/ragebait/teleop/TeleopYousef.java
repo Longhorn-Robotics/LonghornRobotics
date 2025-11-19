@@ -39,13 +39,15 @@ public class TeleopYousef extends OpMode {
     boolean x_pressed_gmpd1 = false;
     boolean isFlickerExtended = false;
     boolean square_pressed_gmpd1 = false;
-    final double joystickBaseSpeed = 0.7f;//0.3f;
+    double joystickBaseSpeed = 0.7f;//0.3f;
 
     //OnOff INTAKE & OUTTAKE
     boolean intakeOn = true;
     boolean outtakeOn = true;
     boolean x_pressed_gmpd2 = false;
     boolean square_pressed_gmpd2 = false;
+    boolean normalDirection = true;
+    boolean slowMode = false;
 
     //Elapsed Time
     private ElapsedTime kickerElapsedTime = new ElapsedTime();
@@ -54,12 +56,12 @@ public class TeleopYousef extends OpMode {
 
     private final ButtonAction[] buttonActions = {
             //Increment Gun Motor
-            new ButtonAction(() -> gamepad1.dpad_up, () -> {
+            new ButtonAction(() -> gamepad1.dpad_up || gamepad2.dpad_up, () -> {
                 targetFlywheelPower += 0.05;
                 targetFlywheelPower = Math.min(targetFlywheelPower, 1);
                 targetFlywheelPower = Math.max(targetFlywheelPower, 0);
             }),
-            new ButtonAction(() -> gamepad1.dpad_down, () -> {
+            new ButtonAction(() -> gamepad1.dpad_down || gamepad2.dpad_down, () -> {
                 targetFlywheelPower -= 0.05;
                 targetFlywheelPower = Math.min(targetFlywheelPower, 1);
                 targetFlywheelPower = Math.max(targetFlywheelPower, 0);
@@ -90,22 +92,26 @@ public class TeleopYousef extends OpMode {
             }),
 
             //Kill All Intake Button
-            new ButtonAction(() -> gamepad1.circle, () -> intakeOn = !intakeOn),
+            new ButtonAction(() -> gamepad1.circle || gamepad2.circle, () -> intakeOn = !intakeOn),
 
             //Kill All Outtake Button
             new ButtonAction(() -> gamepad1.triangle, () -> outtakeOn = !outtakeOn),
 
             //Kicker
-            new ButtonAction(() -> gamepad1.cross, () -> {
+            new ButtonAction(() -> gamepad1.cross || gamepad2.cross, () -> {
                 isKickerExtended = !isKickerExtended;
                 kickerElapsedTime.reset();
             }),
 
             //Flicker
-            new ButtonAction(() -> gamepad1.square, () -> {
+            new ButtonAction(() -> gamepad1.square || gamepad2.square, () -> {
                 isFlickerExtended = !isFlickerExtended;
                 flickerElapsedTime.reset();
             }),
+            //Reversing
+            new ButtonAction(() -> gamepad2.right_trigger > 0.5, () -> normalDirection = !normalDirection),
+            //Slowing down
+            new ButtonAction(() -> gamepad2.left_trigger > 0.5, () -> slowMode = !slowMode),
 
 
     };
@@ -212,6 +218,8 @@ public class TeleopYousef extends OpMode {
             robot.flicker.setPosition(0.17);
         }
 
+
+
         //movement code (tweak later)
         double final_throttle = 0.0f;
         double final_strafe = 0.0f;
@@ -220,14 +228,30 @@ public class TeleopYousef extends OpMode {
 //        double joystickMultiplier = joystickBaseSpeed + (1.0f - gamepad1.right_trigger);
         double joystickMultiplier = joystickBaseSpeed;
 
-        final_throttle += (gamepad1.left_stick_y * joystickMultiplier);
-        final_strafe += (gamepad1.left_stick_x * joystickMultiplier);
-        final_yaw += (gamepad1.right_stick_x * joystickMultiplier);
+        final_throttle += (gamepad2.left_stick_y * joystickMultiplier);
+        final_strafe += (gamepad2.left_stick_x * joystickMultiplier);
+        final_yaw += (gamepad2.right_stick_x * joystickMultiplier);
 
-        robot.motorFL.setPower(final_throttle - final_strafe - final_yaw);
-        robot.motorBL.setPower(final_throttle + final_strafe - final_yaw);
-        robot.motorFR.setPower(final_throttle + final_strafe + final_yaw);
-        robot.motorBR.setPower(final_throttle - final_strafe + final_yaw);
+
+
+        //REVERSE
+        if(normalDirection) {
+            robot.motorFL.setPower(final_throttle - final_strafe - final_yaw);
+            robot.motorBL.setPower(final_throttle + final_strafe - final_yaw);
+            robot.motorFR.setPower(final_throttle + final_strafe + final_yaw);
+            robot.motorBR.setPower(final_throttle - final_strafe + final_yaw);
+        } else if (!normalDirection) {
+            robot.motorBR.setPower(final_throttle - final_strafe - final_yaw);
+            robot.motorFR.setPower(final_throttle + final_strafe - final_yaw);
+            robot.motorBL.setPower(final_throttle + final_strafe + final_yaw);
+            robot.motorFL.setPower(final_throttle - final_strafe - final_yaw);
+        }
+        //SLOWING DOWN
+        if(slowMode) {
+            joystickBaseSpeed = 0.3f;
+        } else if (!slowMode) {
+            joystickBaseSpeed = 0.7f;
+        }
 
         telemetry.addData("Flicker", isFlickerExtended);
         telemetry.update();
