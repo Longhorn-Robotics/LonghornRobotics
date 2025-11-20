@@ -22,6 +22,12 @@ android {
         jvmTarget = '1.8'
     }
 
+    compileSdk 35
+
+    defaultConfig {
+        minSdk 24
+    }
+
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
@@ -35,6 +41,5 @@ repositories {
 
 dependencies {
     implementation project(':FtcRobotController')
-//    implementation "dev.frozenmilk.dairy:Core:2.2.4"
-//    implementation "dev.frozenmilk.mercurial:Mercurial:1.0.3"
+    implementation "com.bylazar:ftcontrol:0.6.8"
 }
