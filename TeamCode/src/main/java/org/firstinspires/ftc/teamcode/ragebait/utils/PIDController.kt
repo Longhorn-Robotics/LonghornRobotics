@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.ragebait.utils
 
-import com.bylazar.ftcontrol.panels.configurables.annotations.Configurable
+import com.bylazar.configurables.annotations.Configurable;
 
 
-@Configurable
+//@Configurable
 class PIDController
 /**
  * construct PID controller
@@ -11,7 +11,7 @@ class PIDController
  * @param _Ki Integral coefficient
  * @param _Kd Derivative coefficient
  * @param _Kf Feedforward provider, optional (default always 0). Takes target, state -> ff val
- */(@JvmField val Kp: Double, @JvmField val Ki: Double, @JvmField val Kd: Double) {
+ */(@JvmField var Kp: Double, @JvmField var Ki: Double, @JvmField var Kd: Double) {
     //     Kf = () -> 0.0;
     var lastError: Double = 0.0
     var integralSum: Double = 0.0

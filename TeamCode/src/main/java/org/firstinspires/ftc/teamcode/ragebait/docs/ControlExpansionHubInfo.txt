@@ -16,3 +16,6 @@ Expansion Hub Ports
  - Motor Port 3: motorElevator (lifting flywheel)
  (Outtake wheels are GoBILDA 5202 Series)
  (Inttake, elevator motor wheel is GoBILDA 5203 Series)
+
+ Sahil's Holes
+  - From Top: 4

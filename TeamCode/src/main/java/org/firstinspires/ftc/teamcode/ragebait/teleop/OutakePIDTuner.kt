@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.ragebait.teleop
 
 
-import com.bylazar.ftcontrol.LoopTimer
-import com.bylazar.ftcontrol.panels.Panels
-import com.bylazar.ftcontrol.panels.configurables.annotations.Configurable
-import com.bylazar.ftcontrol.panels.integration.TelemetryManager
+import com.bylazar.telemetry.PanelsTelemetry
+import com.bylazar.telemetry.TelemetryManager
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
@@ -15,15 +14,16 @@ import kotlin.math.min
 
 @Configurable
 @TeleOp(name = "Outake PID Tuner", group = "Tuning")
-internal class OutakePIDTuner : OpMode() {
+class OutakePIDTuner : OpMode() {
     companion object{
-        @JvmField var ticksIncrement = 0.025
+        @JvmField var pidFlywheel1: PIDController = PIDController(-0.001, 0.0, 0.0)
+        @JvmField var pidFlywheel2: PIDController = PIDController(-0.001, 0.0, 0.0)
     }
-    private val panelsTelemetry: TelemetryManager = Panels.getTelemetry()
+    private val panelsTelemetry: TelemetryManager = PanelsTelemetry.telemetry
 
-    val robot: RobotHardwareYousef by lazy { RobotHardwareYousef() }
+    val robot: RobotHardwareYousef = RobotHardwareYousef()
 
-    val timer = LoopTimer()
+    val timer = ElapsedTime()
 
 
     //PID Gun Stuff
@@ -31,9 +31,6 @@ internal class OutakePIDTuner : OpMode() {
     @JvmField var currentFlywheelSpeed2: Double = 0.0
     @JvmField var targetFlywheelPower: Double = 0.7
     @JvmField var targetFlywheelSpeed: Double = 0.0
-
-    var pidFlywheel1: PIDController = PIDController(-0.001, 0.0, 0.0)
-    var pidFlywheel2: PIDController = PIDController(-0.001, 0.0, 0.0)
 
     private val pidElapsedTime = ElapsedTime()
     private val buttonElapsedTime = ElapsedTime()
@@ -50,9 +47,7 @@ internal class OutakePIDTuner : OpMode() {
     }
 
     override fun loop() {
-        timer.start()
-
-
+//        val t = timer.seconds()
         //Gun Motor
         if (gamepad1.dpad_up && !isGunAdd) {
             targetFlywheelPower += 0.05
@@ -116,13 +111,13 @@ internal class OutakePIDTuner : OpMode() {
         panelsTelemetry.debug("P2: ${pidFlywheel2.Kp}")
         panelsTelemetry.debug("I2: ${pidFlywheel2.Ki}")
         panelsTelemetry.debug("D2: ${pidFlywheel2.Kd}")
-        panelsTelemetry.graph("Target Speed", targetFlywheelSpeed)
-        panelsTelemetry.graph("Current Speed F1", currentFlywheelSpeed1)
-        panelsTelemetry.graph("Current Speed F2", currentFlywheelSpeed2)
+        panelsTelemetry.addData("Target Speed", targetFlywheelSpeed)
+        panelsTelemetry.addData("Current Speed F1", currentFlywheelSpeed1)
+        panelsTelemetry.addData("Current Speed F2", currentFlywheelSpeed2)
 
-        panelsTelemetry.debug("LoopTime: ${timer.ms}ms / ${timer.hz}Hz")
+//        panelsTelemetry.debug("LoopTime: ${timer.ms}ms / ${timer.hz}Hz")
 
         panelsTelemetry.update(telemetry)
-        timer.end()
+//        timer.end()
     }
 }
