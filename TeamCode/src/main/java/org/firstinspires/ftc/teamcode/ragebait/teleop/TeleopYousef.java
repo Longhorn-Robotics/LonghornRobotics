@@ -4,13 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareLite;
 import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareYousef;
 import org.firstinspires.ftc.teamcode.ragebait.utils.PIDController;
 
 import org.firstinspires.ftc.teamcode.ragebait.utils.ButtonAction;
 
-@TeleOp(name = "TeleopYousef")
+@TeleOp(name = "TeleopYousef", group = "Real OpMode")
 public class TeleopYousef extends OpMode {
     RobotHardwareYousef robot = new RobotHardwareYousef();
 
@@ -142,6 +141,98 @@ public class TeleopYousef extends OpMode {
         //Button Actions
         ButtonAction.doActions(buttonActions);
 
+        intakeElevator();
+        intakeFlicker();
+        outtakeFlywheels();
+        outtakeKicker();
+        wheels();
+        telemetry.update();
+    }
+
+    private void intakeElevator() {
+        //Intake Kill
+        if(!intakeOn)
+        {
+            robot.motorElevator.setPower(0);
+            robot.motorIn.setPower(0);
+        }
+        else
+        {
+            robot.motorElevator.setPower(-currentElevatorSpeed);
+            robot.motorIn.setPower(currentIntakeSpeed);
+        }
+    }
+
+    private void outtakeKicker() {
+        //KICKER
+        if(kickerElapsedTime.seconds() > 0.5)
+        {
+            isKickerExtended = false;
+        }
+
+        if(isKickerExtended)
+        {
+            robot.kicker.setPosition(0.0419);
+        }
+        else if(!isKickerExtended)
+        {
+            robot.kicker.setPosition(0.2358);
+        }
+    }
+
+    private void intakeFlicker() {
+        //FLICKER
+        if(flickerElapsedTime.seconds() > 0.25)
+        {
+            isFlickerExtended = false;
+        }
+
+        // TODO: Recalibrate
+        if(isFlickerExtended)
+        {
+            robot.flicker.setPosition(0.35);
+        }
+        else if(!isFlickerExtended)
+        {
+            robot.flicker.setPosition(0.17);
+        }
+        telemetry.addData("Flicker", isFlickerExtended);
+    }
+
+    private void wheels() {
+        //movement code (tweak later)
+        double final_throttle = 0.0f;
+        double final_strafe = 0.0f;
+        double final_yaw = 0.0f;
+
+//        double joystickMultiplier = joystickBaseSpeed + (1.0f - gamepad1.right_trigger);
+        double joystickMultiplier = joystickBaseSpeed;
+        //REVERSE
+        if(normalDirection) {
+            directionMultiplier = 1.0;
+        } else if (!normalDirection) {
+            directionMultiplier = -1.0;
+        }
+        final_throttle += (gamepad2.left_stick_y * joystickMultiplier);
+        final_throttle *= directionMultiplier;
+        final_strafe += (gamepad2.left_stick_x * joystickMultiplier);
+        final_strafe *= directionMultiplier;
+        final_yaw += (gamepad2.right_stick_x * joystickMultiplier);
+
+
+        robot.motorFL.setPower(final_throttle - final_strafe - final_yaw);
+        robot.motorBL.setPower(final_throttle + final_strafe - final_yaw);
+        robot.motorFR.setPower(final_throttle + final_strafe + final_yaw);
+        robot.motorBR.setPower(final_throttle - final_strafe + final_yaw);
+        //SLOWING DOWN
+        if(slowMode) {
+            joystickBaseSpeed = 0.3f;
+        } else if (!slowMode) {
+            joystickBaseSpeed = 0.7f;
+        }
+    }
+
+    private void outtakeFlywheels() {
         //Flywheel PID
         targetFlywheelSpeed = targetFlywheelPower * 2800;
 
@@ -165,18 +256,6 @@ public class TeleopYousef extends OpMode {
         telemetry.addData("Intake ON: ", intakeOn);
         telemetry.addData("Outtake ON: ", outtakeOn);
 
-        //Intake Kill
-        if(!intakeOn)
-        {
-            robot.motorElevator.setPower(0);
-            robot.motorIn.setPower(0);
-        }
-        else
-        {
-            robot.motorElevator.setPower(-currentElevatorSpeed);
-            robot.motorIn.setPower(currentIntakeSpeed);
-        }
-
         //Outtake Kill
         if(!outtakeOn)
         {
@@ -188,74 +267,6 @@ public class TeleopYousef extends OpMode {
             robot.motorOutR.setPower(fly1pid);
             robot.motorOutL.setPower(fly2pid);
         }
-
-        //KICKER
-        if(kickerElapsedTime.seconds() > 0.5)
-        {
-            isKickerExtended = false;
-        }
-
-        if(isKickerExtended)
-        {
-            robot.kicker.setPosition(0.07); //0.55
-        }
-        else if(!isKickerExtended)
-        {
-            robot.kicker.setPosition(0.247); //0.73
-        }
-
-        //FLICKER
-        if(flickerElapsedTime.seconds() > 0.25)
-        {
-            isFlickerExtended = false;
-        }
-
-        if(isFlickerExtended)
-        {
-            robot.flicker.setPosition(0.35);
-        }
-        else if(!isFlickerExtended)
-        {
-            robot.flicker.setPosition(0.17);
-        }
-
-
-
-        //movement code (tweak later)
-        double final_throttle = 0.0f;
-        double final_strafe = 0.0f;
-        double final_yaw = 0.0f;
-
-//        double joystickMultiplier = joystickBaseSpeed + (1.0f - gamepad1.right_trigger);
-        double joystickMultiplier = joystickBaseSpeed;
-        //REVERSE
-        if(normalDirection) {
-            directionMultiplier = 1.0;
-        } else if (!normalDirection) {
-            directionMultiplier = -1.0;
-        }
-        final_throttle += (gamepad2.left_stick_y * joystickMultiplier);
-        final_throttle *= directionMultiplier;
-        final_strafe += (gamepad2.left_stick_x * joystickMultiplier);
-        final_strafe *= directionMultiplier;
-        final_yaw += (gamepad2.right_stick_x * joystickMultiplier);
-
-
-
-
-        robot.motorFL.setPower(final_throttle - final_strafe - final_yaw);
-        robot.motorBL.setPower(final_throttle + final_strafe - final_yaw);
-        robot.motorFR.setPower(final_throttle + final_strafe + final_yaw);
-        robot.motorBR.setPower(final_throttle - final_strafe + final_yaw);
-        //SLOWING DOWN
-        if(slowMode) {
-            joystickBaseSpeed = 0.3f;
-        } else if (!slowMode) {
-            joystickBaseSpeed = 0.7f;
-        }
-
-        telemetry.addData("Flicker", isFlickerExtended);
-        telemetry.update();
     }
 
     // Code to run ONCE after the driver hits STOP
