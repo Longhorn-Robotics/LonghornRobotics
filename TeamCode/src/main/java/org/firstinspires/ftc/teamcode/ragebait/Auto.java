@@ -16,10 +16,10 @@ public class Auto extends OpMode {
 
     private int pathState;
   
-//poses need to be tuned
-  
-    private final Pose startPose = new Pose(28.5, 128, Math.toRadians(180)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(60, 85, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+
+    private final Pose startPose = new Pose(71.859, 7.890, Math.toRadians(90)); // Bottom launch zone
+    private final Pose loadingzone_blue = new Pose(134.982, 6.481, Math.toRadians(180)); // The blue loading zone. It's back is facing towards the balls to pick them up.
+    
     private final Pose pickup1Pose = new Pose(37, 121, Math.toRadians(0)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickup2Pose = new Pose(43, 130, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
     private final Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
