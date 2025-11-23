@@ -1,65 +1,84 @@
 package org.firstinspires.ftc.teamcode.ragebait; 
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
-import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.pedropathing.follower.Follower; 
+import com.pedropathing.geometry.BezierLine; 
+import com.pedropathing.geometry.Pose; 
+import com.pedropathing.paths.Path; 
+import com.pedropathing.paths.PathChain; 
+import com.pedropathing.util.Timer; 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous; 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode; 
 
-@Autonomous(name = "SampleAuto", group = "Examples")
-public class Auto extends OpMode {
+@Autonomous(name = "SampleAuto", group = "Examples") 
+public class Auto extends OpMode { 
 
-    private Follower follower;
-    private Timer pathTimer, actionTimer, opmodeTimer;
+    private Follower follower; 
+    private Timer pathTimer, actionTimer, opmodeTimer; 
+    private int pathState; 
 
-    private int pathState;
-  
-//Start positions which we will refine in testing:
+    //Start positions which we will refine in testing:
     private final Pose bottom_launchzoneBLUE = new Pose(60, 8.4375, Math.toRadians(90)); // Bottom launch zone on the blue side (a,b,c)
     private final Pose bottom_launchzoneRED = new Pose(90, 8.4375, Math.toRadians(90)); // Bottom launch zone ON THE RED SIDE
-    private final Pose blue_depot = new Pose(13.375,110 Math.toRadians(90)); // Blue depot
-    private final Pose red_depot = new Pose(130.625,110 Math.toRadians(90)); // Red depot
+    private final Pose blue_depot = new Pose(13.375,110, Math.toRadians(90)); // Blue depot
+    private final Pose red_depot = new Pose(130.625,110, Math.toRadians(90)); // Red depot
 
-//Ball Positions:
+    //Ball Positions:
     private final Pose loadingzone_blue = new Pose(134.982, 6.481, Math.toRadians(180)); // The blue loading zone. Robot's back is facing towards the balls to pick them up.
     private final Pose loadingzone_red = new Pose(10, 6.481, Math.toRadians(360)); // The red loading zone. Robot's back is facing towards the balls to pick them up.
-   // private final Pose  basezone_blue = new Pose()
+    // private final Pose basezone_blue = new Pose()
 
-//Launch Zones:
+    //Launch Zones:
     //angles need to be refined
-    private final Pose bottom_launchzoneBLUE = new Pose(60, 8.4375, Math.toRadians(50)); 
-    private final Pose bottom_launchzoneRED = new Pose(90, 8.4375, Math.toRadians(122)); 
+    //private final Pose bottom_launchzoneBLUE = new Pose(60, 8.4375, Math.toRadians(50)); 
+    //private final Pose bottom_launchzoneRED = new Pose(90, 8.4375, Math.toRadians(122)); 
     private final Pose toplaunchzoneRED = new Pose(72, 104, Math.toRadians(40)); // midle of the big lauch zone
     private final Pose toplaunchzoneBLUE = new Pose(72, 104, Math.toRadians(145)); // midle of the big lauch zone TO THE BLUE GOAL
 
-    private final Pose loadingzone_red = new pose(x,y, Math.toRadians()); //
+    private Path scorePreload; 
+    private PathChain blue, red; 
 
+     public void buildPaths() { 
+    // scorePreload = new Path(new BezierLine(startPose, scorePose)); 
+    // scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
-
-
-private Path scorePreload;
-private PathChain grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
-
-//movement, also needs to be tuned and determine paths
-//BezierLines are fine
-
-
-public void buildPaths() {
-    scorePreload = new Path(new BezierLine(startPose, scorePose));
-    scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
-
-    
-    grabPickup1 = follower.pathBuilder()
-            .addPath(new BezierLine(scorePose, pickup1Pose))
-            .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
+    /*
+    blue = follower.pathBuilder()
+            .addPath(new BezierLine(bottom_launchzoneBLUE,loadingzone_blue ))
+            .setLinearHeadingInterpolation(bottom_launchzoneBLUE.getHeading(), loadingzone_blue.getHeading()))
+            .addPath(new BezierLine (loadingzone_blue,toplaunchzoneBLUE))
+            .setLinearHeadingInterpolation(loadingzone_blue.getHeading(), toplaunchzoneBLUE.getHeading()))
             .build();
+    */
 
-    scorePickup1 = follower.pathBuilder()
-            .addPath(new BezierLine(pickup1Pose, scorePose))
-            .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose.getHeading())
-            .build();
+    /*
+     blue = follower.pathBuilder()
+    .addPath(
+        new Path(new BezierLine(bottom_launchzoneBLUE, loadingzone_blue))
+            .setLinearHeadingInterpolation(bottom_launchzoneBLUE.getHeading(), loadingzone_blue.getHeading())
+    )
+    .addPath(
+        new Path(new BezierLine(loadingzone_blue, toplaunchzoneBLUE))
+            .setLinearHeadingInterpolation(loadingzone_blue.getHeading(), toplaunchzoneBLUE.getHeading())
+    )
+    .build();
+    */
+
+    blue = follower.pathBuilder()
+        .addPath(new BezierLine(bottom_launchzoneBLUE, loadingzone_blue))
+        .setLinearHeadingInterpolation(bottom_launchzoneBLUE.getHeading(), loadingzone_blue.getHeading())
+        .addPath(new BezierLine(loadingzone_blue, toplaunchzoneBLUE))
+        .setLinearHeadingInterpolation(loadingzone_blue.getHeading(), toplaunchzoneBLUE.getHeading())
+        .build();
+    follower.followPath(blue);
+
+    red = follower.pathBuilder()
+        .addPath(new BezierLine(bottom_launchzoneRED, loadingzone_red))
+        .setLinearHeadingInterpolation(bottom_launchzoneRED.getHeading(), loadingzone_red.getHeading())
+        .addPath(new BezierLine(loadingzone_red, toplaunchzoneRED))
+        .setLinearHeadingInterpolation(loadingzone_red.getHeading(), toplaunchzoneRED.getHeading())
+        .build();
+    follower.followPath(red);
+         
+
 }
 
 
