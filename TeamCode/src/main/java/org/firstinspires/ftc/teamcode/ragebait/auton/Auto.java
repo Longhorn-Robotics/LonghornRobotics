@@ -43,7 +43,7 @@ public class Auto extends OpMode {
 
     
     private Path scorePreload; 
-    private PathChain blue, red; 
+    private PathChain blue, red, shortblue, shortred;
 
      public void buildPaths() { 
     // scorePreload = new Path(new BezierLine(startPose, scorePose)); 
@@ -89,10 +89,10 @@ public class Auto extends OpMode {
 
    //use these two:
          shortred = new Path(new BezierLine(bottom_launchzoneRED, launchred ));
-    scorePreload.setLinearHeadingInterpolation(bottom)launchzoneRED.getHeading(), launchred.getHeading());
+    shortred.setLinearHeadingInterpolation(bottom_launchzoneRED.getHeading(), launchred.getHeading());
 
          shortblue = new Path(new BezierLine(bottom_launchzoneBLUE, launchblue ));
-    scorePreload.setLinearHeadingInterpolation(bottom)launchzoneBLUE.getHeading(), launchblue.getHeading());
+    shortblue.setLinearHeadingInterpolation(bottom_launchzoneBLUE.getHeading(), launchblue.getHeading());
 
 
 }
