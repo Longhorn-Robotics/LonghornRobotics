@@ -35,6 +35,13 @@ public class Auto extends OpMode {
     private final Pose toplaunchzoneRED = new Pose(72, 104, Math.toRadians(40)); // midle of the big lauch zone
     private final Pose toplaunchzoneBLUE = new Pose(72, 104, Math.toRadians(145)); // midle of the big lauch zone TO THE BLUE GOAL
 
+
+    //use these two:
+    private final Pose launchred = new Pose(65.24725943970768,19.995127892813642, Math.toRadians(55));
+    private final Pose launchblue = new Pose(65.24725943970768,19.995127892813642, Math.toRadians(120));
+
+
+    
     private Path scorePreload; 
     private PathChain blue, red; 
 
@@ -65,7 +72,7 @@ public class Auto extends OpMode {
     */
 
     blue = follower.pathBuilder()
-        .addPath(new BezierLine(bottom_launchzoneBLUE, loadingzone_blue))
+        .addPath(new BezierLine(bottom_launchzoneRED, loadingzone_blue))
         .setLinearHeadingInterpolation(bottom_launchzoneBLUE.getHeading(), loadingzone_blue.getHeading())
         .addPath(new BezierLine(loadingzone_blue, toplaunchzoneBLUE))
         .setLinearHeadingInterpolation(loadingzone_blue.getHeading(), toplaunchzoneBLUE.getHeading())
@@ -79,7 +86,14 @@ public class Auto extends OpMode {
         .setLinearHeadingInterpolation(loadingzone_red.getHeading(), toplaunchzoneRED.getHeading())
         .build();
     follower.followPath(red);
-         
+
+   //use these two:
+         shortred = new Path(new BezierLine(bottom_launchzoneRED, launchred ));
+    scorePreload.setLinearHeadingInterpolation(bottom)launchzoneRED.getHeading(), launchred.getHeading());
+
+         shortblue = new Path(new BezierLine(bottom_launchzoneBLUE, launchblue ));
+    scorePreload.setLinearHeadingInterpolation(bottom)launchzoneBLUE.getHeading(), launchblue.getHeading());
+
 
 }
 
@@ -104,7 +118,7 @@ public void autonomousPathUpdate() {
                 /* Score Preload */
 
                 /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                follower.followPath(grabPickup1,true);
+                follower.followPath(blue,true);
                 setPathState(2);
             }
             break;
