@@ -1,3 +1,21 @@
 Documentation of Controller Functions:
 
 Gamepad1:
+right bumper: slow mode (25% speed)
+left bumper: reverse direction
+joysticks: standard driving controls (80% speed)
+dpad: outtake speed (set default to 0.75)
+circle: turn off/on intake
+x: kicker
+square: flicker
+fatass triggers: nothing
+
+gamepad 2:
+joysticks: driving controls (25% speed)
+dpad: outtake speed (set default to 0.75)
+circle: turn off/on intake
+cross: kicker
+square: flicker
+triangle: turn off and on outtake
+zr/zl: inttake sweeper speed adjustments
+fatass triggers: inttake wheel speed adjustments

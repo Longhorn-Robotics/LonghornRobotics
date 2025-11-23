@@ -24,8 +24,8 @@ public class TeleopLite extends OpMode {
     double currentFlywheelSpeed2;
     double targetFlywheelPower = 0.7;
     double targetFlywheelSpeed;
-    PIDController pidFlywheel1 = new PIDController(-0.001, 0, 0);
-    PIDController pidFlywheel2 = new PIDController(-0.001, 0, 0);
+    PIDController pidFlywheel1 = new PIDController(-0.001, 0.0, 0.0);
+    PIDController pidFlywheel2 = new PIDController(-0.001, 0.0, 0.0);
 
     //Add & Subtract For testing
     boolean isIntakeAdd = false;
@@ -70,14 +70,12 @@ public class TeleopLite extends OpMode {
     @Override
     public void loop() {
 
-          robot.kicker.setPosition(flickerGoon);
-          flickerGoon += gamepad1.left_stick_y * tweakSpeed;
-          tweakSpeed += gamepad1.right_stick_y * 0.0001;
-
-          // 0.1381
-          // 0.2917
-
-          telemetry.addData("Kick Position", flickerGoon);
+        robot.kicker.setPosition(flickerGoon);
+        flickerGoon += gamepad1.left_stick_y * tweakSpeed;
+        tweakSpeed += gamepad1.right_stick_y * 0.0001;
+        // 0.1381
+        // 0.2917
+        telemetry.addData("Kick Position", flickerGoon);
         telemetry.addData("Tweakspeed", tweakSpeed);
 
 

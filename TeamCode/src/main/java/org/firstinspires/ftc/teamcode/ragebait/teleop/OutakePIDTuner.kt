@@ -1,24 +1,28 @@
 package org.firstinspires.ftc.teamcode.ragebait.teleop
 
 
+import com.bylazar.configurables.annotations.Configurable
 import com.bylazar.telemetry.PanelsTelemetry
 import com.bylazar.telemetry.TelemetryManager
-import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareYousef
 import org.firstinspires.ftc.teamcode.ragebait.utils.PIDController
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
 @Configurable
 @TeleOp(name = "Outake PID Tuner", group = "Tuning")
 class OutakePIDTuner : OpMode() {
-    companion object{
-        @JvmField var pidFlywheel1: PIDController = PIDController(-0.001, 0.0, 0.0)
-        @JvmField var pidFlywheel2: PIDController = PIDController(-0.001, 0.0, 0.0)
+    companion object {
+        // Tuned on 21/11/25 by Teo at 0.7 power
+        @JvmField var fMult = 1.0
+        @JvmField var pidFlywheel1: PIDController = PIDController(-0.002, 0.0, -0.0002,)
+        @JvmField var pidFlywheel2: PIDController = PIDController(-0.0025, 0.0, -0.0002,)
     }
+
     private val panelsTelemetry: TelemetryManager = PanelsTelemetry.telemetry
 
     val robot: RobotHardwareYousef = RobotHardwareYousef()
@@ -32,18 +36,26 @@ class OutakePIDTuner : OpMode() {
     @JvmField var targetFlywheelPower: Double = 0.7
     @JvmField var targetFlywheelSpeed: Double = 0.0
 
+
+    var outtakeOn: Boolean = false;
+
     private val pidElapsedTime = ElapsedTime()
     private val buttonElapsedTime = ElapsedTime()
 
     // Kicker
     var isKickerExtended: Boolean = false
     var x_pressed_gmpd1: Boolean = false
+    var circle_pressed: Boolean = false
     var isGunAdd: Boolean = false
     var isGunSubtract: Boolean = false
 
     override fun init() {
         panelsTelemetry.debug("Init was ran!")
         panelsTelemetry.update(telemetry)
+        robot.init(hardwareMap)
+
+        pidFlywheel1.f = { targetFlywheelPower * fMult }
+        pidFlywheel2.f = { targetFlywheelPower * fMult }
     }
 
     override fun loop() {
@@ -66,7 +78,7 @@ class OutakePIDTuner : OpMode() {
         targetFlywheelPower = min(targetFlywheelPower, 1.0)
         targetFlywheelPower = max(targetFlywheelPower, 0.0)
 
-        targetFlywheelSpeed = targetFlywheelPower * 2800
+        targetFlywheelSpeed = if (outtakeOn) (targetFlywheelPower * 2800) else 0.0
 
         currentFlywheelSpeed1 = robot.motorOutR.velocity
         currentFlywheelSpeed2 = robot.motorOutL.velocity
@@ -82,6 +94,21 @@ class OutakePIDTuner : OpMode() {
             pidElapsedTime.seconds()
         )
         pidElapsedTime.reset()
+
+
+        //Outtake Kill
+        if (!outtakeOn) {
+            robot.motorOutR.power = 0.0
+            robot.motorOutL.power = 0.0
+        } else {
+            robot.motorOutR.power = fly1pid
+            robot.motorOutL.power = fly2pid
+        }
+
+        if (gamepad1.circle && !circle_pressed) {
+            outtakeOn = !outtakeOn;
+        }
+        circle_pressed = gamepad1.circle;
 
         //KICKER
         if(gamepad1.cross && !x_pressed_gmpd1)
@@ -105,15 +132,8 @@ class OutakePIDTuner : OpMode() {
         panelsTelemetry.debug("Target Speed: $targetFlywheelSpeed")
         panelsTelemetry.debug("Current Speed F1: $currentFlywheelSpeed1")
         panelsTelemetry.debug("Current Speed F2: $currentFlywheelSpeed2")
-        panelsTelemetry.debug("P1: ${pidFlywheel1.Kp}")
-        panelsTelemetry.debug("I1: ${pidFlywheel1.Ki}")
-        panelsTelemetry.debug("D1: ${pidFlywheel1.Kd}")
-        panelsTelemetry.debug("P2: ${pidFlywheel2.Kp}")
-        panelsTelemetry.debug("I2: ${pidFlywheel2.Ki}")
-        panelsTelemetry.debug("D2: ${pidFlywheel2.Kd}")
-        panelsTelemetry.addData("Target Speed", targetFlywheelSpeed)
-        panelsTelemetry.addData("Current Speed F1", currentFlywheelSpeed1)
-        panelsTelemetry.addData("Current Speed F2", currentFlywheelSpeed2)
+        if (abs(fly1pid) > 1.0) panelsTelemetry.debug("Saturating fly 1!")
+        if (abs(fly2pid) > 1.0) panelsTelemetry.debug("Saturating fly 2!")
 
 //        panelsTelemetry.debug("LoopTime: ${timer.ms}ms / ${timer.hz}Hz")
 
