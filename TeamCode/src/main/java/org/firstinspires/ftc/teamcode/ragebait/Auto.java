@@ -6,7 +6,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 @Autonomous(name = "SampleAuto", group = "Examples")
 public class Auto extends OpMode {
@@ -16,13 +16,25 @@ public class Auto extends OpMode {
 
     private int pathState;
   
+//Start positions which we will refine in testing:
+    private final Pose bottom_launchzoneBLUE = new Pose(60, 8.4375, Math.toRadians(90)); // Bottom launch zone on the blue side (a,b,c)
+    private final Pose bottom_launchzoneRED = new Pose(90, 8.4375, Math.toRadians(90)); // Bottom launch zone ON THE RED SIDE
+    private final Pose blue_depot = new Pose(13.375,110 Math.toRadians(90)); // Blue depot
+    private final Pose red_depot = new Pose(130.625,110 Math.toRadians(90)); // Red depot
 
-    private final Pose startPose = new Pose(71.859, 7.890, Math.toRadians(90)); // Bottom launch zone
-    private final Pose loadingzone_blue = new Pose(134.982, 6.481, Math.toRadians(180)); // The blue loading zone. It's back is facing towards the balls to pick them up.
-    
-    private final Pose pickup1Pose = new Pose(37, 121, Math.toRadians(0)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose pickup2Pose = new Pose(43, 130, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+//Ball Positions:
+    private final Pose loadingzone_blue = new Pose(134.982, 6.481, Math.toRadians(180)); // The blue loading zone. Robot's back is facing towards the balls to pick them up.
+    private final Pose loadingzone_red = new Pose(10, 6.481, Math.toRadians(360)); // The red loading zone. Robot's back is facing towards the balls to pick them up.
+   // private final Pose  basezone_blue = new Pose()
+
+//Launch Zones:
+    //angles need to be refined
+    private final Pose bottom_launchzoneBLUE = new Pose(60, 8.4375, Math.toRadians(50)); 
+    private final Pose bottom_launchzoneRED = new Pose(90, 8.4375, Math.toRadians(122)); 
+    private final Pose toplaunchzoneRED = new Pose(72, 104, Math.toRadians(40)); // midle of the big lauch zone
+    private final Pose toplaunchzoneBLUE = new Pose(72, 104, Math.toRadians(145)); // midle of the big lauch zone TO THE BLUE GOAL
+
+    private final Pose loadingzone_red = new pose(x,y, Math.toRadians()); //
 
 
 
@@ -32,6 +44,8 @@ private PathChain grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPick
 
 //movement, also needs to be tuned and determine paths
 //BezierLines are fine
+
+
 public void buildPaths() {
     scorePreload = new Path(new BezierLine(startPose, scorePose));
     scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
@@ -46,27 +60,9 @@ public void buildPaths() {
             .addPath(new BezierLine(pickup1Pose, scorePose))
             .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose.getHeading())
             .build();
-
-    grabPickup2 = follower.pathBuilder()
-            .addPath(new BezierLine(scorePose, pickup2Pose))
-            .setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Pose.getHeading())
-            .build();
-
-    scorePickup2 = follower.pathBuilder()
-            .addPath(new BezierLine(pickup2Pose, scorePose))
-            .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose.getHeading())
-            .build();
-
-    grabPickup3 = follower.pathBuilder()
-            .addPath(new BezierLine(scorePose, pickup3Pose))
-            .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Pose.getHeading())
-            .build();
-
-    scorePickup3 = follower.pathBuilder()
-            .addPath(new BezierLine(pickup3Pose, scorePose))
-            .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose.getHeading())
-            .build();
 }
+
+
 //managing the paths, needs work
 public void autonomousPathUpdate() {
     switch (pathState) {
