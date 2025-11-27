@@ -43,7 +43,7 @@
 //
 //
 //    private Path scorePreload;
-//    private PathChain blue, red, shortblue, shortred;
+//    private Path blue, red, shortblue, shortred;
 //
 //     public void buildPaths() {
 //    // scorePreload = new Path(new BezierLine(startPose, scorePose));

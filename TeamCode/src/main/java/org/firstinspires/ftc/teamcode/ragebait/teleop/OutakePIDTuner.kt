@@ -54,8 +54,8 @@ class OutakePIDTuner : OpMode() {
         panelsTelemetry.update(telemetry)
         robot.init(hardwareMap)
 
-        pidFlywheel1.f = { targetFlywheelPower * fMult }
-        pidFlywheel2.f = { targetFlywheelPower * fMult }
+        pidFlywheel1.feedforward = { targetFlywheelPower * fMult }
+        pidFlywheel2.feedforward = { targetFlywheelPower * fMult }
     }
 
     override fun loop() {

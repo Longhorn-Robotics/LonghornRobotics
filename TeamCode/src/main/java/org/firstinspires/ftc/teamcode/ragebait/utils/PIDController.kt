@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.ragebait.utils
 
-import com.bylazar.configurables.annotations.Configurable;
-
 
 /**
  * construct PID controller
@@ -11,10 +9,10 @@ import com.bylazar.configurables.annotations.Configurable;
  * @param _Kf Feedforward provider, optional (default always 0). Takes target, state -> ff val
  */
 class PIDController @JvmOverloads constructor(
-    @JvmField var Kp: Double,
-    @JvmField var Ki: Double,
-    @JvmField var Kd: Double,
-    @JvmField var f: () -> Double = { 0.0 },
+    @JvmField var proportional: Double,
+    @JvmField var integral: Double,
+    @JvmField var derivative: Double,
+    @JvmField var feedforward: () -> Double = { 0.0 },
     @JvmField var integralCap: Double = Double.POSITIVE_INFINITY,) {
     //     Kf = () -> 0.0;
     private var lastError: Double = 0.0
@@ -42,6 +40,6 @@ class PIDController @JvmOverloads constructor(
         val derivative = (error - lastError) / dt
         lastError = error
         integralSum += error * dt
-        return Kp * error + Kd * derivative + Ki * integralSum + f()
+        return proportional * error + this.derivative * derivative + integral * integralSum + feedforward()
     }
 }

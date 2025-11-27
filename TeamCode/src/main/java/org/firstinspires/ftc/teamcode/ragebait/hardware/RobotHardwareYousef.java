@@ -25,6 +25,11 @@ public class RobotHardwareYousef {
     public Servo flicker;
 
     private ElapsedTime period = new ElapsedTime();
+    public double kickerOutPosition = 0.0419;
+    public double kickerInPosition = 0.2358;
+
+    public double flickerOutPosition = 0.35;
+    public double flickerInPosition = 0.17;
 
     public RobotHardwareYousef() {}
 

@@ -18,33 +18,19 @@ class TeleopYousef : OpMode() {
     var currentIntakeSpeed: Double = 0.7
 
     //PID Gun Stuff
-    var currentFlywheelSpeed1: Double = 0.0
-    var currentFlywheelSpeed2: Double = 0.0
-    var targetFlywheelPower: Double = 0.75
+    var targetFlywheelPower: Double = 0.65
     var targetFlywheelSpeed: Double = 0.0
     var pidFlywheel1: PIDController = PIDController(-0.002, 0.0, -0.0002, {targetFlywheelPower})
     var pidFlywheel2: PIDController = PIDController(-0.0025, 0.0, -0.0002, {targetFlywheelPower})
 
-    //Add & Subtract For testing
-    var isIntakeAdd: Boolean = false
-    var isIntakeSubtract: Boolean = false
-    var isElevatorAdd: Boolean = false
-    var isElevatorSubtract: Boolean = false
-    var isGunAdd: Boolean = false
-    var isGunSubtract: Boolean = false
-
     //Buttons & Servo Extenders
     var isKickerExtended: Boolean = false
-    var x_pressed_gmpd1: Boolean = false
     var isFlickerExtended: Boolean = false
-    var square_pressed_gmpd1: Boolean = false
     var joystickBaseSpeed: Double = 0.7 //0.3f;
 
     //OnOff INTAKE & OUTTAKE
-    var intakeOn: Boolean = true
+    var intakeOn: Boolean = false
     var outtakeOn: Boolean = true
-    var x_pressed_gmpd2: Boolean = false
-    var square_pressed_gmpd2: Boolean = false
     var normalDirection: Boolean = true
     var slowMode: Boolean = false
     var directionMultiplier: Double = 1.0
@@ -174,11 +160,12 @@ class TeleopYousef : OpMode() {
             isFlickerExtended = false
         }
 
-        if (isFlickerExtended) {
-            robot.flicker.position = 0.35
-        } else if (!isFlickerExtended) {
-            robot.flicker.position = 0.17
+        robot.flicker.position = if (isFlickerExtended) {
+            0.35
+        } else {
+            0.17
         }
+
         telemetry.addData("Flicker", isFlickerExtended)
     }
 
@@ -192,15 +179,18 @@ class TeleopYousef : OpMode() {
         } else {
             -1.0
         }
+
+        val slowSpeed = 0.4
+
         //SLOWING DOWN
         joystickBaseSpeed = if (slowMode) {
-            0.25
+            slowSpeed
         } else {
-            0.8
+            1.3
         }
 
-        val finalThrottle = joystickBaseSpeed * gamepad1.left_stick_y * directionMultiplier + 0.25 * gamepad2.left_stick_y
-        val finalStrafe = joystickBaseSpeed * gamepad1.left_stick_x * directionMultiplier + 0.25 * gamepad2.left_stick_x
+        val finalThrottle = joystickBaseSpeed * gamepad1.left_stick_y * directionMultiplier + slowSpeed * gamepad2.left_stick_y
+        val finalStrafe = joystickBaseSpeed * gamepad1.left_stick_x * directionMultiplier + slowSpeed * gamepad2.left_stick_x
         val finalYaw = joystickBaseSpeed * gamepad1.right_stick_x + 0.25 * gamepad2.right_stick_x
 
         robot.motorFL.power = finalThrottle - finalStrafe - finalYaw
@@ -213,8 +203,8 @@ class TeleopYousef : OpMode() {
         //Flywheel PID
         targetFlywheelSpeed = targetFlywheelPower * 2800
 
-        currentFlywheelSpeed1 = robot.motorOutR.velocity
-        currentFlywheelSpeed2 = robot.motorOutL.velocity
+        val currentFlywheelSpeed1 = robot.motorOutR.velocity
+        val currentFlywheelSpeed2 = robot.motorOutL.velocity
 
         val fly1pid = pidFlywheel1.update(
             targetFlywheelSpeed,
