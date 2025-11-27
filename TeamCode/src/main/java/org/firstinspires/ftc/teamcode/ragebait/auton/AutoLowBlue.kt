@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.ragebait.auton
 
 import com.pedropathing.follower.Follower
-import com.pedropathing.geometry.BezierCurve
-import com.pedropathing.geometry.BezierLine
 import com.pedropathing.geometry.Pose
 import com.pedropathing.paths.PathChain
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
@@ -17,19 +15,16 @@ import org.firstinspires.ftc.teamcode.ragebait.utils.PIDController
 open class AutoLowBlue : OpMode() {
 
     private val robot = RobotHardwareYousef()
-    private var follower: Follower? = null
-
-    private val blueStartPose = Pose(56.0, 9.0, Math.toRadians(90.0))
-    private val blueLaunchPoint = Pose(66.14, 18.37, Math.toRadians(118.0))
+    private val follower: Follower by lazy { Constants.createFollower(hardwareMap) }
 
     private var pathState = 0
 
-    private var StarttoScore: PathChain? = null
-    private var ScoretoEnd: PathChain? = null
+    private val starttoScore: PathChain by lazy { PathBuilder.constructPath(follower, startPose, scorePose) }
+    private val scoretoEnd: PathChain by lazy { PathBuilder.constructPath(follower, scorePose, endPose) }
 
     open val startPose = Pose(56.0, 9.0, Math.toRadians(90.0))
     open val scorePose = Pose(60.984, 13.732, Math.toRadians(118.0))
-    open val endPose = Pose(38.598, 10.000, Math.toRadians(90.0)) // Low Blue
+    open val endPose = Pose(38.598, 10.000, Math.toRadians(90.0))
 
 
     val pathTimer = ElapsedTime();
@@ -43,13 +38,9 @@ open class AutoLowBlue : OpMode() {
         robot.init(hardwareMap)
         pathState = 0
         targetFlywheelPower = 0.0
-        follower = Constants.createFollower(hardwareMap)
-        buildPaths()
 
-
-        follower!!.setStartingPose(startPose)
-        follower!!.followPath(StarttoScore)
-//        follower!!.followPath(StarttoScore)
+        follower.setStartingPose(startPose)
+        follower.followPath(starttoScore)
 
         pathTimer.reset()
         opmodeTimer.reset()
@@ -57,14 +48,14 @@ open class AutoLowBlue : OpMode() {
 
     override fun loop() {
         // These loop the movements of the robot, these must be called continuously in order to work
-        follower!!.update();
+        follower.update();
         autonomousPathUpdate();
 
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);
-        telemetry.addData("x", follower!!.pose.x);
-        telemetry.addData("y", follower!!.pose.y);
-        telemetry.addData("heading", follower!!.pose.heading);
+        telemetry.addData("x", follower.pose.x);
+        telemetry.addData("y", follower.pose.y);
+        telemetry.addData("heading", follower.pose.heading);
         telemetry.update();
 
     }
@@ -73,7 +64,7 @@ open class AutoLowBlue : OpMode() {
         when (pathState) {
             // Start to score
             0 -> {
-                if (!(follower!!.isBusy)) {
+                if (!(follower.isBusy)) {
                     pathState = 1
                     startScoreLaunching()
                     scoringTimer.reset()
@@ -82,7 +73,7 @@ open class AutoLowBlue : OpMode() {
             }
             // Shoot out balls x2-3 and score
             1 -> {
-                if (!follower!!.isBusy) {
+                if (!follower.isBusy) {
                     if (scoringTimer.seconds() > 10.0) {
                         pathState = 2
                         endScoreLaunching()
@@ -97,8 +88,8 @@ open class AutoLowBlue : OpMode() {
             2 -> {
                 robot.motorOutR.power = 0.0
                 robot.motorOutL.power = 0.0
-                if (!follower!!.isBusy) {
-                    follower!!.followPath(ScoretoEnd)
+                if (!follower.isBusy) {
+                    follower.followPath(scoretoEnd)
                     pathState = 3
                 }
             }
@@ -136,26 +127,6 @@ open class AutoLowBlue : OpMode() {
         else if (kickerElapsedTime.seconds() > 0.5) {
             robot.flicker.position = robot.flickerOutPosition
         }
-    }
-//needs to be called
-    private fun buildPaths() {
-        StarttoScore = follower!!.pathBuilder()
-            .addPath(
-                BezierCurve(
-                    startPose,
-                    scorePose
-                )
-            )
-            .setLinearHeadingInterpolation(startPose.heading, scorePose.heading)
-            .build()
-
-        ScoretoEnd = follower!!
-            .pathBuilder()
-            .addPath(
-                BezierLine(scorePose, endPose)
-            )
-            .setLinearHeadingInterpolation(scorePose.heading, endPose.heading)
-            .build();
     }
 
     var targetFlywheelPower = 0.6
