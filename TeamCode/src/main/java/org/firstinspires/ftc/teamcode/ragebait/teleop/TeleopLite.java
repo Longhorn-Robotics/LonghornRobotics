@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareLite;
 import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareYousef;
 import org.firstinspires.ftc.teamcode.ragebait.utils.PIDController;
 
-@TeleOp(name = "TeleopLite", group = "Pushbot")
+@TeleOp(name = "TeleopLite", group = "Testing")
 public class TeleopLite extends OpMode {
 //    RobotHardwareLite robot = new RobotHardwareLite();
 
