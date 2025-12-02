@@ -14,13 +14,16 @@ import kotlin.math.max
 import kotlin.math.min
 
 @Configurable
-@TeleOp(name = "Outake PID Tuner", group = "Tuning")
+@TeleOp(name = "Outake PID Tuner", group = "Testing")
 class OutakePIDTuner : OpMode() {
     companion object {
         // Tuned on 21/11/25 by Teo at 0.7 power
-        @JvmField var fMult = 1.0
-        @JvmField var pidFlywheel1: PIDController = PIDController(-0.002, 0.0, -0.0002,)
-        @JvmField var pidFlywheel2: PIDController = PIDController(-0.0025, 0.0, -0.0002,)
+        @JvmField
+        var fMult = 1.0
+        @JvmField
+        var pidFlywheel1: PIDController = PIDController(-0.002, 0.0, -0.0002)
+        @JvmField
+        var pidFlywheel2: PIDController = PIDController(-0.0025, 0.0, -0.0002)
     }
 
     private val panelsTelemetry: TelemetryManager = PanelsTelemetry.telemetry
@@ -31,10 +34,14 @@ class OutakePIDTuner : OpMode() {
 
 
     //PID Gun Stuff
-    @JvmField var currentFlywheelSpeed1: Double = 0.0
-    @JvmField var currentFlywheelSpeed2: Double = 0.0
-    @JvmField var targetFlywheelPower: Double = 0.7
-    @JvmField var targetFlywheelSpeed: Double = 0.0
+    @JvmField
+    var currentFlywheelSpeed1: Double = 0.0
+    @JvmField
+    var currentFlywheelSpeed2: Double = 0.0
+    @JvmField
+    var targetFlywheelPower: Double = 0.7
+    @JvmField
+    var targetFlywheelSpeed: Double = 0.0
 
 
     var outtakeOn: Boolean = false;
@@ -111,8 +118,7 @@ class OutakePIDTuner : OpMode() {
         circle_pressed = gamepad1.circle;
 
         //KICKER
-        if(gamepad1.cross && !x_pressed_gmpd1)
-        {
+        if (gamepad1.cross && !x_pressed_gmpd1) {
             isKickerExtended = !isKickerExtended;
             buttonElapsedTime.reset();
         } else if (buttonElapsedTime.seconds() > 0.5) {
@@ -120,12 +126,9 @@ class OutakePIDTuner : OpMode() {
         }
         x_pressed_gmpd1 = gamepad1.cross;
 
-        if(isKickerExtended)
-        {
+        if (isKickerExtended) {
             robot.kicker.setPosition(0.07); //0.55
-        }
-        else if(!isKickerExtended)
-        {
+        } else if (!isKickerExtended) {
             robot.kicker.setPosition(0.247); //0.73
         }
 

@@ -98,8 +98,6 @@ class TeleopYousef : OpMode() {
         ButtonAction(
             { gamepad1.right_bumper },
             { slowMode = !slowMode }),
-
-
         )
 
     // Code to run once when the driver hits INIT
@@ -150,7 +148,7 @@ class TeleopYousef : OpMode() {
 
         if (isKickerExtended) {
             robot.kicker.position = 0.0419
-        } else if (!isKickerExtended) {
+        } else {
             robot.kicker.position = 0.2358
         }
     }
