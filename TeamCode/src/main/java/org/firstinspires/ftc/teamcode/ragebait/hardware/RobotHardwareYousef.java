@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
 public class RobotHardwareYousef {
     HardwareMap hwMap;
 
@@ -22,6 +24,8 @@ public class RobotHardwareYousef {
 
     public Servo kicker;
     public Servo flicker;
+
+    public WebcamName cam;
 
     private ElapsedTime period = new ElapsedTime();
     public double kickerOutPosition = 0.0419;
@@ -83,5 +87,8 @@ public class RobotHardwareYousef {
         motorIn.setDirection(DcMotor.Direction.FORWARD);
         motorIn.setPower(0);
         //intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Camera
+        cam = hwMap.get(WebcamName.class, "Webcam 1");
     }
 }
