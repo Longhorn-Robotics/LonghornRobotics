@@ -1,0 +1,243 @@
+package org.firstinspires.ftc.teamcode.ragebait.systems
+
+import  com.qualcomm.robotcore.hardware.Gamepad
+import org.firstinspires.ftc.teamcode.ragebait.systems.GamepadBinder.Button
+import java.util.EnumMap
+
+
+typealias ButtonBucket<T> = EnumMap<Button, MutableSet<T>>
+
+class GamepadBinder(
+    val gamepad: Gamepad
+) {
+    enum class Button {
+        cross,
+        square,
+        circle,
+        triangle,
+        right_bumper,
+        left_bumper,
+        dpad_up,
+        dpad_down,
+        dpad_left,
+        dpad_right,
+        share,
+        option,
+        guide,
+        left_stick_button,
+        right_stick_button,
+        left_trigger,
+        right_trigger,
+        // TODO: (maybe) aliases
+    }
+
+    inline fun <reified K : Enum<K>, V> exhaustiveEnumMap(init: (key: K) -> V): EnumMap<K, V> {
+        val map = EnumMap<K, V>(K::class.java)
+        for (key in enumValues<K>()) {
+            map[key] = init(key)
+        }
+        return map
+    }
+
+    private val toggleBinds: ButtonBucket<Action> = exhaustiveEnumMap { mutableSetOf() }
+    private val invertedToggleBinds: ButtonBucket<Action> = exhaustiveEnumMap { mutableSetOf() }
+    private val fullBinds: ButtonBucket<Action> = exhaustiveEnumMap { mutableSetOf() }
+    private val invertedFullBinds: ButtonBucket<Action> = exhaustiveEnumMap { mutableSetOf() }
+    private val pressBinds: ButtonBucket<Action> = exhaustiveEnumMap { mutableSetOf() }
+    private val releaseBinds: ButtonBucket<Action> = exhaustiveEnumMap { mutableSetOf() }
+
+    /**
+     * Binds an action to a button press intuitively
+     * Makes the action start on the rising edge, interrupt on the
+     * falling edge. Can be inverted with `invert`
+     * */
+    fun bind_button_full(button: Button, invert: Boolean, action: Action): GamepadBinder {
+        if (!invert) {
+            fullBinds.getValue(button).add(action)
+        } else {
+            invertedFullBinds.getValue(button).add(action)
+        }
+        return this
+    }
+
+    /**
+     * Binds an action to be toggled by a button press
+     * I.E. starts when first pressed,  cancels on next press
+     * Can be inverted to start on init.
+     * Currently does not support toggling on the falling edge (I'm genuinely curious as to if that's
+     * ever desired behavior)
+     * */
+    fun bind_button_toggle(button: Button, invert: Boolean, action: Action): GamepadBinder {
+        if (!invert) {
+            toggleBinds.getValue(button).add(action)
+        } else {
+            invertedToggleBinds.getValue(button).add(action)
+        }
+        return this
+    }
+
+    /**
+     * Binds an action to the rising edge of a button press
+     * Does not cancel the action if button released
+     * Beware of restarting actions, currently undefined behavior
+     * */
+    fun bind_button_press(button: Button, action: Action): GamepadBinder {
+        pressBinds.getValue(button).add(action)
+        return this
+    }
+
+    /**
+     * Binds an action to the falling edge of a button press
+     * Does not cancel the action if button released
+     * Beware of restarting actions, currently undefined behavior
+     * */
+    fun bind_button_release(button: Button, action: Action): GamepadBinder {
+        releaseBinds.getValue(button).add(action)
+        return this
+    }
+
+    // TODO: Float bindings?
+
+    enum class Analog {
+        left_stick_x,
+        left_stick_y,
+        right_stick_x,
+        right_stick_y,
+        left_trigger,
+        right_trigger,
+    }
+
+    private fun getAnalog(analog: Analog): Float = when (analog) {
+        Analog.left_stick_x -> gamepad.left_stick_x
+        Analog.left_stick_y -> gamepad.left_stick_y
+        Analog.right_stick_x -> gamepad.right_stick_x
+        Analog.right_stick_y -> gamepad.right_stick_y
+        Analog.left_trigger -> gamepad.left_trigger
+        Analog.right_trigger -> gamepad.right_trigger
+    }
+
+    private val analogBinds: EnumMap<Analog, MutableSet<(Float) -> Unit>> = exhaustiveEnumMap { mutableSetOf() }
+
+    /**
+     * Analog bindings don't directly use actions; they simply run a consumer for when the value
+     * gets updated.
+     * For example, you could bind that setter for a property in a subsystem to control via a stick
+     * */
+    fun bind_float(analog: Analog, consumer: (Float) -> Unit) {
+        analogBinds.getValue(analog).add(consumer)
+    }
+
+    private val triggerActuationValue = 0.6
+    private val triggerDeActuationValue = 0.4
+
+    private fun handleActuatedTrigger(button: Button, curValue: Float): Boolean =
+        if (buttonCurrentStates.getValue(button)) {
+            curValue > triggerDeActuationValue
+        } else {
+            curValue > triggerActuationValue
+        }
+
+    private fun buttonSupplier(button: Button): Boolean = when (button) {
+            Button.cross -> gamepad.cross
+            Button.square -> gamepad.square
+            Button.circle -> gamepad.circle
+            Button.triangle -> gamepad.triangle
+            Button.right_bumper -> gamepad.right_bumper
+            Button.left_bumper -> gamepad.left_bumper
+            Button.dpad_up -> gamepad.dpad_up
+            Button.dpad_down -> gamepad.dpad_down
+            Button.dpad_left -> gamepad.dpad_left
+            Button.dpad_right -> gamepad.dpad_right
+            Button.share -> gamepad.share
+            Button.option -> gamepad.options
+            Button.guide -> gamepad.guide
+            Button.left_stick_button -> gamepad.left_stick_button
+            Button.right_stick_button -> gamepad.right_stick_button
+            Button.left_trigger -> handleActuatedTrigger(Button.left_trigger, gamepad.left_trigger)
+            Button.right_trigger -> handleActuatedTrigger(Button.right_trigger, gamepad.right_trigger)
+    }
+
+    private val buttonLastStates: EnumMap<Button, Boolean> = exhaustiveEnumMap { false }
+    private val buttonCurrentStates: EnumMap<Button, Boolean> = exhaustiveEnumMap { false }
+
+    private fun updatePressStates() {
+        Button.entries.forEach {
+            // Move old current to last states
+            buttonLastStates[it] = buttonCurrentStates.getValue(it)
+            buttonCurrentStates[it] = buttonSupplier(it)
+        }
+    }
+
+    private fun handleFullBinds() {
+        Button.entries.forEach { button ->
+            val down = buttonCurrentStates.getValue(button)
+            val last = buttonLastStates.getValue(button)
+            val pressed = down && !last
+            val released = !down && last
+
+            if (pressed) {
+                fullBinds.getValue(button).forEach { it.schedule() }
+                invertedFullBinds.getValue(button).forEach { it.interrupt() }
+            } else if (released) {
+                fullBinds.getValue(button).forEach { it.interrupt() }
+                invertedFullBinds.getValue(button).forEach { it.schedule() }
+            }
+        }
+    }
+
+    private var togglesOn = false
+    private fun handleToggleBinds() {
+        Button.entries.forEach { button ->
+            val pressed = buttonCurrentStates.getValue(button) && !buttonLastStates.getValue(button)
+            if (pressed) {
+                if (!togglesOn) {
+                    toggleBinds.getValue(button).forEach { it.schedule() }
+                    invertedToggleBinds.getValue(button).forEach { it.interrupt() }
+                } else {
+                    toggleBinds.getValue(button).forEach { it.interrupt() }
+                    invertedToggleBinds.getValue(button).forEach { it.schedule() }
+                }
+                togglesOn = !togglesOn
+            }
+        }
+    }
+
+    private fun handlePressBinds() {
+        Button.entries.forEach {  button ->
+            val pressed = buttonCurrentStates.getValue(button) && !buttonLastStates.getValue(button)
+            if (pressed) {
+                pressBinds.getValue(button).forEach { it.schedule() }
+            }
+        }
+    }
+
+    private fun handleReleaseBinds() {
+        Button.entries.forEach {  button ->
+            val released = !buttonCurrentStates.getValue(button) && buttonLastStates.getValue(button)
+            if (released) {
+                releaseBinds.getValue(button).forEach { it.schedule() }
+            }
+        }
+    }
+
+    private val analogLastValues: EnumMap<Analog, Float> = exhaustiveEnumMap { 0.0f }
+    private fun handleAnalogBinds() {
+        Analog.entries.forEach { analog ->
+            val value = getAnalog(analog)
+            if (value == analogLastValues.getValue(analog)) return
+            analogLastValues[analog] = value
+            analogBinds.getValue(analog).forEach { it(value)  }
+        }
+    }
+
+    /** Call during loop to handle all the actions
+     * Does *not* call loop on the actions themselves (i.e. only schedules and interrupts) */
+    fun loop() {
+        updatePressStates()
+        handleFullBinds()
+        handleToggleBinds()
+        handlePressBinds()
+        handleReleaseBinds()
+        handleAnalogBinds()
+    }
+}
