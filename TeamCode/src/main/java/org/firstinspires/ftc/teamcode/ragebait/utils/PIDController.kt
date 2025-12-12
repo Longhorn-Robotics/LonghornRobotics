@@ -3,16 +3,16 @@ package org.firstinspires.ftc.teamcode.ragebait.utils
 
 /**
  * construct PID controller
- * @param _Kp Proportional coefficient
- * @param _Ki Integral coefficient
- * @param _Kd Derivative coefficient
- * @param _Kf Feedforward provider, optional (default always 0). Takes target, state -> ff val
+ * @param proportional Proportional coefficient
+ * @param integral Integral coefficient
+ * @param derivative Derivative coefficient
+ * @param feedforward Feedforward provider, optional (default always 0). Takes target, state -> ff val
  */
 class PIDController @JvmOverloads constructor(
     @JvmField var proportional: Double,
     @JvmField var integral: Double,
     @JvmField var derivative: Double,
-    @JvmField var feedforward: () -> Double = { 0.0 },
+    @JvmField var feedforward: () -> Double,
     @JvmField var integralCap: Double = Double.POSITIVE_INFINITY,) {
     //     Kf = () -> 0.0;
     private var lastError: Double = 0.0
