@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.ragebait.systems
 
 import  com.qualcomm.robotcore.hardware.Gamepad
-import org.firstinspires.ftc.teamcode.ragebait.systems.GamepadBinder.Button
-import java.util.EnumMap
-
-
-typealias ButtonBucket<T> = EnumMap<Button, MutableSet<T>>
 
 class GamepadBinder(
     val gamepad: Gamepad
@@ -81,7 +76,6 @@ class GamepadBinder(
     /**
      * Binds an action to the falling edge of a button press
      * Does not cancel the action if button released
-     * Beware of restarting actions, currently undefined behavior
      * */
     fun bind_button_release(button: Button, action: Action): GamepadBinder {
         releaseBinds[button].add(action)
@@ -113,7 +107,7 @@ class GamepadBinder(
      * gets updated.
      * For example, you could bind that setter for a property in a subsystem to control via a stick
      * */
-    fun bind_float(analog: Analog, consumer: (Float) -> Unit) {
+    fun bind_analog(analog: Analog, consumer: (Float) -> Unit) {
         analogBinds[analog].add(consumer)
     }
 
@@ -166,11 +160,11 @@ class GamepadBinder(
             val released = !down && last
 
             if (pressed) {
-                fullBinds[button].forEach { it.schedule() }
+                fullBinds[button].forEach { it.start() }
                 invertedFullBinds[button].forEach { it.interrupt() }
             } else if (released) {
                 fullBinds[button].forEach { it.interrupt() }
-                invertedFullBinds[button].forEach { it.schedule() }
+                invertedFullBinds[button].forEach { it.start() }
             }
         }
     }
@@ -181,11 +175,11 @@ class GamepadBinder(
             val pressed = buttonCurrentStates[button] && !buttonLastStates[button]
             if (pressed) {
                 if (!togglesOn) {
-                    toggleBinds[button].forEach { it.schedule() }
+                    toggleBinds[button].forEach { it.start() }
                     invertedToggleBinds[button].forEach { it.interrupt() }
                 } else {
                     toggleBinds[button].forEach { it.interrupt() }
-                    invertedToggleBinds[button].forEach { it.schedule() }
+                    invertedToggleBinds[button].forEach { it.start() }
                 }
                 togglesOn = !togglesOn
             }
@@ -196,7 +190,7 @@ class GamepadBinder(
         Button.entries.forEach {  button ->
             val pressed = buttonCurrentStates[button] && !buttonLastStates[button]
             if (pressed) {
-                pressBinds[button].forEach { it.schedule() }
+                pressBinds[button].forEach { it.start() }
             }
         }
     }
@@ -205,7 +199,7 @@ class GamepadBinder(
         Button.entries.forEach {  button ->
             val released = !buttonCurrentStates[button] && buttonLastStates[button]
             if (released) {
-                releaseBinds[button].forEach { it.schedule() }
+                releaseBinds[button].forEach { it.start() }
             }
         }
     }

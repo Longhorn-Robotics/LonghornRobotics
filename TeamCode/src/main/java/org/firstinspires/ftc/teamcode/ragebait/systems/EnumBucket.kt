@@ -12,7 +12,7 @@ inline fun <reified K : Enum<K>, T> exhaustiveEnumMap(noinline init: (K) -> T): 
 /**
  * A class that provides an enum map guaranteed to be exhaustive.
  * Allowing use of indexing as purely non-null (unless you chose to
- * make `T` a nullable type for some unexplained reason
+ * make `T` a nullable type for some unexplained reason.
  * */
 class ExhaustiveEnumMap<K: Enum<K>, T>(private val kClass: Class<K>, private val entries: EnumEntries<K>, init: (K) -> T) {
     private val enumMap by lazy {
