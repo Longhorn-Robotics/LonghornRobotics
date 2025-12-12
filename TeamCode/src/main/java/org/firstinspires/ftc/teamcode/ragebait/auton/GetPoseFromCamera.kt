@@ -21,11 +21,11 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import java.lang.String
 
+import org.firstinspires.ftc.robotcore.external.Telemetry
+
 
 
 object GetPoseFromCamera {
-    var robot: RobotHardwareYousef = RobotHardwareYousef()
-
     const val USING_WEBCAM: Boolean = true
     private var visionPortal: VisionPortal? = null
     private var aprilTag: AprilTagProcessor? = null
@@ -39,13 +39,16 @@ object GetPoseFromCamera {
     var capReqTime: Long = 0
 
     //Camera Values
-    var fx: Double = 822.317 //1415.979838;
-    var fy: Double = 822.317 //1411.104157;
-    var cx: Double = 319.495 //644.1777;
-    var cy: Double = 242.502 //357.2814359;
+    var fx: Double = 1415.979838;
+    var fy: Double = 1411.104157;
+    var cx: Double = 644.1777;
+    var cy: Double = 357.2814359;
 
     private val cameraPosition: Position = Position(DistanceUnit.INCH, 0.0, 0.0, 0.0, 0)
-    private val cameraOrientation = YawPitchRollAngles(AngleUnit.DEGREES, 0.0, -90.0, 0.0, 0)
+    private val cameraOrientation = YawPitchRollAngles(AngleUnit.DEGREES, 0.0, 0.0, 0.0, 0)
+
+    //Telemetry Solution
+    lateinit var telemetry: Telemetry
 
     @SuppressLint("DefaultLocale")
     fun getPose(): Pose? {
@@ -54,9 +57,6 @@ object GetPoseFromCamera {
         // Make this asynchronous, able to run from another thread/as a non-blocking coroutine
         // Add whatever args necessary
 
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch START to start OpMode");
-        telemetry.update();
         //waitForStart();
 
         visionPortal?.resumeStreaming()
@@ -94,10 +94,10 @@ object GetPoseFromCamera {
                 )
                 val pose2d: Pose2D = Pose2D(
                     DistanceUnit.INCH,
-                    detection.robotPose.getPosition().x,
-                    detection.robotPose.getPosition().y,
+                    detection.ftcPose.x,
+                    detection.ftcPose.y,
                     AngleUnit.RADIANS,
-                    detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)
+                    detection.ftcPose.yaw
                 )
                 currentPose = PoseConverter.pose2DToPose(pose2d, FTCCoordinates.INSTANCE)
             }
@@ -118,11 +118,12 @@ object GetPoseFromCamera {
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)")
 
         // Push telemetry to the Driver Station.
-        telemetry.update()
         return currentPose
     }
 
-    fun initAprilTag() {
+    fun initAprilTag(robot: RobotHardwareYousef, tel: Telemetry) {
+        this.telemetry = tel
+
         val ourLib = AprilTagLibrary.Builder()
             .addTag(
                 21, "Mosaic GPP",
@@ -159,6 +160,7 @@ object GetPoseFromCamera {
                 // to load a predefined calibration for your camera.
 
                 .setLensIntrinsics(fx, fy, cx, cy)
+                .setCameraPose(cameraPosition, cameraOrientation)
                 .build()
 
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
@@ -175,7 +177,7 @@ object GetPoseFromCamera {
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USING_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 1"))
+            builder.setCamera(robot.cam)
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK)
         }
@@ -202,9 +204,5 @@ object GetPoseFromCamera {
 
         // Disable or re-enable the aprilTag processor at any time.
         visionPortal?.setProcessorEnabled(aprilTag, true)
-    }
-    fun closeCamera() {
-        // Save more CPU resources when camera is no longer needed.
-        visionPortal?.close();
     }
 }

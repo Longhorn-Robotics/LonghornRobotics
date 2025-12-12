@@ -15,9 +15,11 @@ class AutoTest : AutoLowBlue() {
 
     override fun init() {
         robot.init(hardwareMap)
-        GetPoseFromCamera.initAprilTag()
+        GetPoseFromCamera.initAprilTag(robot, telemetry)
     }
     override fun loop() {
         var currentPose: Pose? = GetPoseFromCamera.getPose()
+        telemetry.addData("Pose values: ", currentPose)
+        telemetry.update()
     }
 }

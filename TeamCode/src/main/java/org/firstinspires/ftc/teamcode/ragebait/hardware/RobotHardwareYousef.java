@@ -39,7 +39,7 @@ public class RobotHardwareYousef {
     public void init(HardwareMap ahwMap) {
         // Save reference to hardware map
         hwMap = ahwMap;
-
+        /*
         //Wheel Motors
         motorFR = hwMap.get(DcMotorEx.class, "motorFR");
         motorFL = hwMap.get(DcMotorEx.class, "motorFL");
@@ -87,7 +87,7 @@ public class RobotHardwareYousef {
         motorIn.setDirection(DcMotor.Direction.FORWARD);
         motorIn.setPower(0);
         //intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+*/
         //Camera
         cam = hwMap.get(WebcamName.class, "Webcam 1");
     }
