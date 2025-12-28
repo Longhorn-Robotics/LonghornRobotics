@@ -6,13 +6,13 @@ abstract class SubSystem(
     val opMode: OpMode
 ) {
 
-    private class DependencyStruct<>(
-    ) {
-
+    companion object SystemRegistrar {
+        val systems = mutableSetOf<SubSystem>()
     }
 
-    // TODO: Consider a dependency system
-    companion object DependencyRegistrar {
+    init {
+        @Suppress
+        systems.add(this)
     }
 
     // maybe use reflection to do this

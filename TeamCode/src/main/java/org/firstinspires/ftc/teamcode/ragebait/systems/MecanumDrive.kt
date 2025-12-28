@@ -15,6 +15,8 @@ class MecanumDrive(
     val motorBLHWMapName: String = "motorBL",
 ) : SubSystem(opMode) {
 
+    private val dependencyCell: OuttakeLauncher by DependencyCell()
+
     private fun initMotor(name: String): DcMotorEx {
         val motor = opMode.hardwareMap.get<DcMotorEx>(DcMotorEx::class.java, name)
         motor.power = 0.0
@@ -38,6 +40,8 @@ class MecanumDrive(
         motorFL.direction = DcMotorSimple.Direction.FORWARD
         motorBR.direction = DcMotorSimple.Direction.REVERSE
         motorBL.direction = DcMotorSimple.Direction.FORWARD
+
+        dependencyCell.outtakeOn = true;
     }
 
     // This brings up an interesting design question in the subsystems; Some should distance themselves
