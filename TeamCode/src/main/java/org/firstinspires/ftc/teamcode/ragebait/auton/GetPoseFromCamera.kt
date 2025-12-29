@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.ragebait.auton
 import android.annotation.SuppressLint
 import android.util.Size
 import com.pedropathing.ftc.FTCCoordinates
+import com.pedropathing.ftc.InvertedFTCCoordinates
 import com.pedropathing.ftc.PoseConverter
+import com.pedropathing.geometry.PedroCoordinates
 import com.pedropathing.geometry.Pose
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry
@@ -51,7 +53,7 @@ object GetPoseFromCamera {
     lateinit var telemetry: Telemetry
 
     @SuppressLint("DefaultLocale")
-    fun getPose(): Pose? {
+    fun getPose(poseType : kotlin.String): Pose? {
         //TODO("Not yet implemented")
         // Considerations:
         // Make this asynchronous, able to run from another thread/as a non-blocking coroutine
@@ -64,7 +66,8 @@ object GetPoseFromCamera {
         val currentDetections: List<AprilTagDetection> = aprilTag!!.detections
         telemetry.addData("# AprilTags Detected", currentDetections.size)
 
-        var currentPose: Pose? = null
+        var ftcPose: Pose? = null
+        var pedroPathingPose: Pose? = null
 
         // Step through the list of detections and display info for each one.
         for (detection in currentDetections) {
@@ -99,7 +102,7 @@ object GetPoseFromCamera {
                     AngleUnit.RADIANS,
                     detection.ftcPose.yaw
                 )
-                currentPose = PoseConverter.pose2DToPose(pose2d, FTCCoordinates.INSTANCE)
+                ftcPose = PoseConverter.pose2DToPose(pose2d, InvertedFTCCoordinates.INSTANCE)
             }
             else {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id))
@@ -116,9 +119,21 @@ object GetPoseFromCamera {
         // Add "key" information to telemetry
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.")
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)")
+        // Format ftcPose to PedroPathing coordinate system using PedroCoordinates.INSTANCE
+        pedroPathingPose = ftcPose?.getAsCoordinateSystem(PedroCoordinates.INSTANCE)
 
-        // Push telemetry to the Driver Station.
-        return currentPose
+        // Return different-formatted pose based on argument passed into function
+        return when (poseType) {
+            "ftc" -> {
+                ftcPose
+            }
+            "pedropathing" -> {
+                pedroPathingPose
+            }
+            else -> {
+                throw IllegalArgumentException()
+            }
+        }
     }
 
     fun initAprilTag(robot: RobotHardwareYousef, tel: Telemetry) {

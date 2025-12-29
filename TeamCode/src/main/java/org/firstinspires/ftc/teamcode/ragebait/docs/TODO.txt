@@ -1,5 +1,4 @@
 TODO list:
 
-- Controller 1:
-    - make the left trigger on controller 1 reverse drive controls (back is now front, front is now back)
-    - a button that sets the robot to 30% speed (right trigger)
+- Camera
+    - tune poses, ensure accuracy of poses
