@@ -9,18 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class RobotHardwareLite {
     HardwareMap hwMap;
+    public DcMotorEx motor1Test;
+    public DcMotorEx motor2Test;
 
-    //YOUSEF MOTORS AND SERVOS
-
-    public DcMotorEx motorOutR;
-    public DcMotorEx motorOutL;
-    public DcMotorEx motorIn;
-    public DcMotorEx motorElevator;
-
-    public Servo kicker;
-    public Servo flicker;
-
-    private ElapsedTime period = new ElapsedTime();
 
     public RobotHardwareLite() {}
 
@@ -28,29 +19,17 @@ public class RobotHardwareLite {
         // Save reference to hardware map
         hwMap = ahwMap;
 
-        //Right Output Motor
-        motorOutR = hwMap.get(DcMotorEx.class, "motorOutR");
-        motorOutR.setDirection(DcMotor.Direction.FORWARD);
-        motorOutR.setPower(0);
-        motorOutR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //Motor 1 Test
+        motor1Test = hwMap.get(DcMotorEx.class, "motor1");
+        motor1Test.setDirection(DcMotor.Direction.FORWARD);
+        motor1Test.setPower(0);
+        motor1Test.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        //Left Output Motor
-        motorOutL = hwMap.get(DcMotorEx.class, "motorOutL");
-        motorOutL.setDirection(DcMotor.Direction.REVERSE);
-        motorOutL.setPower(0);
-        motorOutL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //Motor 2 Test
+        motor2Test = hwMap.get(DcMotorEx.class, "motor2");
+        motor2Test.setDirection(DcMotor.Direction.FORWARD);
+        motor2Test.setPower(0);
+        motor2Test.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        //Kicker & Flicker Servos
-        kicker = hwMap.get(Servo.class, "kicker");
-        flicker = hwMap.get(Servo.class, "flicker");
-
-        motorElevator = hwMap.get(DcMotorEx.class, "motorElevator");
-        motorElevator.setDirection(DcMotor.Direction.FORWARD);
-        motorElevator.setPower(0);
-
-        motorIn = hwMap.get(DcMotorEx.class, "motorIn");
-        motorIn.setDirection(DcMotor.Direction.FORWARD);
-        motorIn.setPower(0);
-        //intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
