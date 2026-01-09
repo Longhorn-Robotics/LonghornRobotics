@@ -21,9 +21,9 @@ class OutakePIDTuner : OpMode() {
         @JvmField
         var fMult = 1.0
         @JvmField
-        var pidFlywheel1: PIDController = PIDController(-0.002, 0.0, -0.0002)
+        var pidFlywheel1: PIDController = PIDController(-0.002, 0.0, -0.0002, { 0.0 })
         @JvmField
-        var pidFlywheel2: PIDController = PIDController(-0.0025, 0.0, -0.0002)
+        var pidFlywheel2: PIDController = PIDController(-0.0025, 0.0, -0.0002, { 0.0 })
     }
 
     private val panelsTelemetry: TelemetryManager = PanelsTelemetry.telemetry

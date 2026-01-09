@@ -12,13 +12,7 @@ public class RobotHardwareLite {
 
     //YOUSEF MOTORS AND SERVOS
 
-    public DcMotorEx motorOutR;
-    public DcMotorEx motorOutL;
-    public DcMotorEx motorIn;
-    public DcMotorEx motorElevator;
-
-    public Servo kicker;
-    public Servo flicker;
+    public DcMotorEx motor;
 
     private ElapsedTime period = new ElapsedTime();
 
@@ -29,28 +23,9 @@ public class RobotHardwareLite {
         hwMap = ahwMap;
 
         //Right Output Motor
-        motorOutR = hwMap.get(DcMotorEx.class, "motorOutR");
-        motorOutR.setDirection(DcMotor.Direction.FORWARD);
-        motorOutR.setPower(0);
-        motorOutR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //Left Output Motor
-        motorOutL = hwMap.get(DcMotorEx.class, "motorOutL");
-        motorOutL.setDirection(DcMotor.Direction.REVERSE);
-        motorOutL.setPower(0);
-        motorOutL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //Kicker & Flicker Servos
-        kicker = hwMap.get(Servo.class, "kicker");
-        flicker = hwMap.get(Servo.class, "flicker");
-
-        motorElevator = hwMap.get(DcMotorEx.class, "motorElevator");
-        motorElevator.setDirection(DcMotor.Direction.FORWARD);
-        motorElevator.setPower(0);
-
-        motorIn = hwMap.get(DcMotorEx.class, "motorIn");
-        motorIn.setDirection(DcMotor.Direction.FORWARD);
-        motorIn.setPower(0);
-        //intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor = hwMap.get(DcMotorEx.class, "motor");
+        motor.setDirection(DcMotor.Direction.FORWARD);
+        motor.setPower(0);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }

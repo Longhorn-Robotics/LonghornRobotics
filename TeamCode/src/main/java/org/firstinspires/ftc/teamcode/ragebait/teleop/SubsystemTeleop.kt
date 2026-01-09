@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.ragebait.systems.MecanumDrive
 import org.firstinspires.ftc.teamcode.ragebait.systems.OuttakeLauncher
+import org.firstinspires.ftc.teamcode.ragebait.systems.SubSystem
 import org.firstinspires.ftc.teamcode.ragebait.utils.ButtonAction
 import kotlin.math.max
 import kotlin.math.min
@@ -13,11 +14,11 @@ class SubsystemTeleop : OpMode() {
 
     // TODO: Add control binding system
 
-    //open
-    val subsystems = arrayOf(
-        // Now that I think of it, it might make more sense for the motor names to be hardcoded within the class than the buttons
-        MecanumDrive(this),
-        OuttakeLauncher(this)
+    val subsystems = mutableSetOf<SubSystem>()
+
+    open val systems = setOf(
+        MecanumDrive::class,
+        OuttakeLauncher::class
     )
 
     override fun init() {
