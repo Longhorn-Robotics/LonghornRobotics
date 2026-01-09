@@ -26,7 +26,6 @@ open class AutoLowBlue : OpMode() {
     open val scorePose = Pose(60.984, 13.732, Math.toRadians(118.0))
     open val endPose = Pose(38.598, 10.000, Math.toRadians(90.0))
 
-
     val pathTimer = ElapsedTime();
     val opmodeTimer = ElapsedTime();
     val pidElapsedTime = ElapsedTime();
