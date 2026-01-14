@@ -29,7 +29,43 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 
 object GetPoseFromCamera {
     const val USING_WEBCAM: Boolean = true
-    private var visionPortal: VisionPortal? = null
+    private val visionPortal: VisionPortal by lazy {
+        var robot = RobotHardwareYousef()
+        // Create the vision portal by using a builder.
+        val builder = VisionPortal.Builder()
+
+        // Set the camera (webcam vs. built-in RC phone camera).
+        if (USING_WEBCAM) {
+            builder.setCamera(robot.cam)
+        } else {
+            builder.setCamera(BuiltinCameraDirection.BACK)
+        }
+
+        // Choose a camera resolution. Not all cameras support all resolutions.
+        builder.setCameraResolution(Size(1280, 720))
+
+        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
+        builder.enableLiveView(true)
+
+        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
+        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2)
+
+        // Choose whether or not LiveView stops if no processors are enabled.
+        // If set "true", monitor shows solid orange screen if no processors enabled.
+        // If set "false", monitor shows camera view without annotations.
+        builder.setAutoStopLiveView(false)
+
+        // Set and enable the processor.
+        builder.addProcessor(aprilTag)
+
+        // Build the Vision Portal, using the above settings.
+        val tempPortal = builder.build() ?: throw Error();
+
+        // Disable or re-enable the aprilTag processor at any time.
+        tempPortal.setProcessorEnabled(aprilTag, true)
+
+        tempPortal
+    }
     private var aprilTag: AprilTagProcessor? = null
     val INTERNAL_CAM_DIR: BuiltinCameraDirection = BuiltinCameraDirection.BACK
     const val RESOLUTION_WIDTH: Int = 640
@@ -187,37 +223,8 @@ object GetPoseFromCamera {
         // Note: Decimation can be changed on-the-fly to adapt during a match.
         aprilTag?.setDecimation(3f)
 
-        // Create the vision portal by using a builder.
-        val builder = VisionPortal.Builder()
-
-        // Set the camera (webcam vs. built-in RC phone camera).
-        if (USING_WEBCAM) {
-            builder.setCamera(robot.cam)
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK)
-        }
-
-        // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(Size(1280, 720))
-
-        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.enableLiveView(true)
-
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2)
-
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        builder.setAutoStopLiveView(false)
-
-        // Set and enable the processor.
-        builder.addProcessor(aprilTag)
-
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build()
 
         // Disable or re-enable the aprilTag processor at any time.
-        visionPortal?.setProcessorEnabled(aprilTag, true)
+        visionPortal.setProcessorEnabled(aprilTag, true)
     }
 }
