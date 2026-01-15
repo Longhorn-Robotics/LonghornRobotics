@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ragebait.systems.core
+package org.firstinspires.ftc.teamcode.ragebait.systems.core.utils
 
 /**
  * A bijective map interface that allows for a one-to-one mapping between keys and values.

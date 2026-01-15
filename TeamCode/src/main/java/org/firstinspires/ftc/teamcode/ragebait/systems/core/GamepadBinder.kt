@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.ragebait.systems.core
 
 import  com.qualcomm.robotcore.hardware.Gamepad
+import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.EnumBucket
+import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.ExhaustiveEnumMap
+import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.enumBucket
+import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.exhaustiveEnumMap
 
 class GamepadBinder(
     val gamepad: Gamepad
@@ -100,7 +104,8 @@ class GamepadBinder(
         Analog.right_trigger -> gamepad.right_trigger
     }
 
-    private val analogBinds: EnumBucket<Analog, Pair<(Float) -> Unit, (Float) -> Float>> = enumBucket()
+    private val analogBinds: EnumBucket<Analog, Pair<(Float) -> Unit, (Float) -> Float>> =
+        enumBucket()
 
     /**
      * Analog bindings don't directly use actions; they simply run a consumer for when the value
@@ -142,7 +147,8 @@ class GamepadBinder(
     }
 
     private val buttonLastStates: ExhaustiveEnumMap<Button, Boolean> = exhaustiveEnumMap { false }
-    private val buttonCurrentStates: ExhaustiveEnumMap<Button, Boolean> = exhaustiveEnumMap { false }
+    private val buttonCurrentStates: ExhaustiveEnumMap<Button, Boolean> =
+        exhaustiveEnumMap { false }
 
     private fun updatePressStates() {
         Button.entries.forEach {

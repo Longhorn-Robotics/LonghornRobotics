@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.ragebait.systems.core
 
-import android.R
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
-import java.util.Objects.toString
+import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.BiMap
 import kotlin.reflect.KClass
 
 abstract class SubSystem(
     val opMode: OpMode
 ) {
+
+    // IDEA: Static opMode value
 
     // Dependency handling:
     // Subsystems are constructed (kotlin init block)
@@ -28,17 +29,32 @@ abstract class SubSystem(
     //
     // TODO: Hardware Dependency Cell
     //  - If two things get the same motor, they should conflict
-    // Possible TODO: Custom error handling thingymajigy
-    //  - BEAM time, straight Erlanging it
-    // Consideration: "Let it Crash"
-    //  - Allow some failed initializations, carry on with as many as possible
+    //  - Handling different types of hardware
+    //    - We have a base HardwareCell class that just has the basic functionality for reserving
+    //        a hardware name, since the robot config basically constrains us to string unique ids
+    //    - Then Specific subclasses handling each type of hardware
+    //      - Disambiguation between encoder and full motor access!
+    //      - Alright, make special wrapper classes for motors and
     //
-    // Possible TODO: allow for weak dependencies
-    //  - Two forms: dependencies not required during initialization, and those that are completely optional
-    //  - These can be handled by just not considering them during resolution
+    // TODO: Custom error handling thingymajigy
+    //  - BEAM time, straight Erlanging it
+    //  - Consideration: "Let it Crash": Allow some failed initializations, carry on with as many as possible
+    //
+    // TODO: allow for strict and weak dependencies
+    //  - Strict dependency: this subsystem demands unique access to the super method
+    //  - Two forms of weak: dependencies not required during initialization or are completely optional
+    //     - These can be handled by just not considering them during resolution
 
     companion object {
 
+        val defaultOpMode: OpMode by lazy {
+            systemEnumeration.inv[0]?.opMode ?: throw java.lang.NullPointerException("Ts not defined yet")
+        }
+
+        // Hardware dependencies
+        val hardwareDepMap = BiMap<String, SubSystem>()
+
+        // Subsystem dependencies
         var systemCount = 0;
         val systemEnumeration = BiMap<SubSystem, Int>()
         val systemClassMap = BiMap<KClass<out SubSystem>, SubSystem>()
@@ -49,6 +65,7 @@ abstract class SubSystem(
         }
 
         fun doInitializations() {
+            // TODO: Proper error signalling
             // Generate an actual graph
             // Adjacency list, graph[system] = setOf(deps)
             val graph = Array(systemCount) { IntArray(systemCount) }

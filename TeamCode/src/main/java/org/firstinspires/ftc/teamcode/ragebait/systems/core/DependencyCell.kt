@@ -6,6 +6,7 @@ import kotlin.reflect.KProperty
 class DependencyCell<T: SubSystem>(thisSystem: SubSystem, val dependency: KClass<T>) {
 
     init {
+        @Suppress("UNCHECKED_CAST")
         SubSystem.addDependency(thisSystem, dependency as KClass<SubSystem>)
     }
 
