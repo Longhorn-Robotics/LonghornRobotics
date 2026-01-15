@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ragebait.systems
+package org.firstinspires.ftc.teamcode.ragebait.systems.core
 
 class ActionBuilder private constructor(
     val name: String,
@@ -92,7 +92,7 @@ class ActionBuilder private constructor(
                 .loop {
                     actionList[currentAction].update()
                     val result = actionList[currentAction].running
-                    if (result) return@loop result
+                    if (result) return@loop true
                     currentAction++
                     currentAction < actionList.size
                 }

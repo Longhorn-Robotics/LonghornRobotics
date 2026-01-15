@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ragebait.systems
+package org.firstinspires.ftc.teamcode.ragebait.systems.core
 
 import  com.qualcomm.robotcore.hardware.Gamepad
 
@@ -100,15 +100,15 @@ class GamepadBinder(
         Analog.right_trigger -> gamepad.right_trigger
     }
 
-    private val analogBinds: EnumBucket<Analog, (Float) -> Unit> = enumBucket()
+    private val analogBinds: EnumBucket<Analog, Pair<(Float) -> Unit, (Float) -> Float>> = enumBucket()
 
     /**
      * Analog bindings don't directly use actions; they simply run a consumer for when the value
      * gets updated.
      * For example, you could bind that setter for a property in a subsystem to control via a stick
      * */
-    fun bind_analog(analog: Analog, consumer: (Float) -> Unit) {
-        analogBinds[analog].add(consumer)
+    fun bind_analog(analog: Analog, consumer: (Float) -> Unit, processor: (Float) -> Float = { it }) {
+        analogBinds[analog].add(Pair(consumer, processor))
     }
 
     private val triggerActuationValue = 0.6
@@ -210,7 +210,7 @@ class GamepadBinder(
             val value = getAnalog(analog)
             if (value == analogLastValues[analog]) return
             analogLastValues[analog] = value
-            analogBinds[analog].forEach { it(value)  }
+            analogBinds[analog].forEach { it.first(it.second(value)) }
         }
     }
 

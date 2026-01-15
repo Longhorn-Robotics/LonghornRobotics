@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ragebait.systems
+package org.firstinspires.ftc.teamcode.ragebait.systems.core
 
 import java.util.EnumMap
 import kotlin.enums.EnumEntries

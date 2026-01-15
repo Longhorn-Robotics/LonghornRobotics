@@ -25,8 +25,8 @@ public class TeleopLite extends OpMode {
     double currentFlywheelSpeed2;
     double targetFlywheelPower = 0.7;
     double targetFlywheelSpeed;
-    PIDController pidFlywheel1 = new PIDController(-0.001, 0.0, 0.0);
-    PIDController pidFlywheel2 = new PIDController(-0.001, 0.0, 0.0);
+    PIDController pidFlywheel1 = new PIDController(-0.001, 0.0, 0.0, () -> 0.0);
+    PIDController pidFlywheel2 = new PIDController(-0.001, 0.0, 0.0, () -> 0.0 );
 
     //Add & Subtract For testing
     boolean isIntakeAdd = false;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ragebait.systems
+package org.firstinspires.ftc.teamcode.ragebait.systems.core
 
 /** An action
  * Supports chaining into other actions, parallelization, e.t.c.
