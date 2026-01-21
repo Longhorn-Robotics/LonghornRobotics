@@ -7,10 +7,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
 public class RobotHardwareLite {
     HardwareMap hwMap;
     public DcMotorEx motor1Test;
     public DcMotorEx motor2Test;
+
+    public WebcamName cam;
 
 
     public RobotHardwareLite() {}
@@ -30,6 +34,9 @@ public class RobotHardwareLite {
         motor2Test.setDirection(DcMotor.Direction.FORWARD);
         motor2Test.setPower(0);
         motor2Test.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //Camera
+        cam = hwMap.get(WebcamName.class, "Webcam 1");
 
     }
 }

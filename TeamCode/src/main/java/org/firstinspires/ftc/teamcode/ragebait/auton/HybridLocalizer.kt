@@ -24,13 +24,14 @@ class HybridLocalizer(val hwmap: HardwareMap, val wheelConstants: ThreeWheelCons
     private var startPose = Pose()
     private var camPose : Pose? = null
     private var odoPose : Pose? = null
+
     override fun getPose(): Pose {
        camPose = GetPoseFromCamera.getPose("pedropathing")
        odoPose = threeWheel.pose
-       val newPoseX: Double = odoPose?.x?.times(1 - weight)?.plus(camPose!!.x.times(weight)) ?:
-       val newPoseY: Double = odoPose?.y?.times(1 - weight)?.plus(camPose?.y?.times(weight) ?: ) ?:
+       val newPoseX: Double? = odoPose?.x?.times(1 - weight)?.plus(camPose!!.x.times(weight))
+       val newPoseY: Double? = odoPose?.y?.times(1 - weight)?.plus(camPose!!.y.times(weight))
 
-       return Pose(newPoseX, newPoseY, odoPose.heading)
+       return Pose(newPoseX!!, newPoseY!!, odoPose!!.heading)
     }
 
 
@@ -45,7 +46,7 @@ class HybridLocalizer(val hwmap: HardwareMap, val wheelConstants: ThreeWheelCons
     override fun update() {
         threeWheel.update()
         // TODO: Every once in a while*
-        threeWheel.pose = cameraPose
+        //threeWheel.pose = cameraPose
     }
 
     override fun getTotalHeading(): Double = threeWheel.totalHeading

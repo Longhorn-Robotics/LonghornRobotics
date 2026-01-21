@@ -24,13 +24,14 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import java.lang.String
 
 import org.firstinspires.ftc.robotcore.external.Telemetry
-
+import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareLite
 
 
 object GetPoseFromCamera {
     const val USING_WEBCAM: Boolean = true
     private val visionPortal: VisionPortal by lazy {
-        var robot = RobotHardwareYousef()
+        //var robot = RobotHardwareYousef()
+        var robot = RobotHardwareLite()
         // Create the vision portal by using a builder.
         val builder = VisionPortal.Builder()
 
@@ -172,7 +173,7 @@ object GetPoseFromCamera {
         }
     }
 
-    fun initAprilTag(robot: RobotHardwareYousef, tel: Telemetry) {
+    fun initAprilTag(robot: RobotHardwareLite, tel: Telemetry) {
         this.telemetry = tel
 
         val ourLib = AprilTagLibrary.Builder()

@@ -1,22 +1,34 @@
 package org.firstinspires.ftc.teamcode.ragebait.teleop
 
+import com.pedropathing.geometry.Pose
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.ragebait.auton.GetPoseFromCamera
 import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareLite
 import org.firstinspires.ftc.teamcode.ragebait.utils.ButtonAction
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sqrt
 
-@TeleOp(name = "TeleopLite", group = "Testing")
-class TeleopLite : OpMode() {
-    //RobotHardwareLite robot = new RobotHardwareLite();
+@TeleOp(name = "TeleopCameraProf", group = "Testing")
+class TeleopCameraProf : OpMode() {
     var robot: RobotHardwareLite = RobotHardwareLite()
     var testMotor1Speed: Double = 0.0
     var testMotor2Speed: Double = 0.0
 
+    var camPose : Pose? = null
+
+    var currentTime : Double = 0.0
+    var avgTime : Double = 0.0
+    var squaredDifTime : Double = 0.0
+    var standardDeviationTime : Double = 0.0
+    var numLoops : Int = 0
+
     //Elapsed Time
-    private val buttonElapsedTime = ElapsedTime()
+    private val loopElapsedTime = ElapsedTime()
+    private val lastCameraElapsedTime = ElapsedTime()
+
 
     private val buttonActions = arrayOf(
         //Increment Motor 2
@@ -43,18 +55,32 @@ class TeleopLite : OpMode() {
 
     // Code to run ONCE when the driver hits PLAY
     override fun start() {
-        buttonElapsedTime.reset()
+        loopElapsedTime.reset()
+        lastCameraElapsedTime.reset()
+        GetPoseFromCamera.initAprilTag(robot, telemetry)
     }
 
     // Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
     override fun loop() {
+        //Getting Cam
+        camPose = GetPoseFromCamera.getPose("pedropathing")
 
-        ButtonAction.doActions(buttonActions)
-        testMotor1Speed = 0.3 * gamepad1.left_stick_x.toDouble()
-        robot.motor1Test.power = testMotor1Speed
-        robot.motor2Test.power = testMotor2Speed
-        telemetry.addData("Current Motor 1 Speed: ", testMotor1Speed)
-        telemetry.addData("Current Motor 2 Speed: ", testMotor2Speed)
+        //Current time
+        currentTime = loopElapsedTime.seconds()
+        telemetry.addData("Time Elapsed Since Last Loop: ", currentTime)
+
+        //Average Time
+        numLoops++
+        val prevAvgTime : Double = avgTime
+        avgTime += (currentTime - avgTime) / numLoops
+        telemetry.addData("Average Time Elapsed Since Last Loop: ", avgTime)
+
+        //Standard Deviation for Time
+        squaredDifTime += (currentTime - prevAvgTime) * (currentTime - avgTime)
+        standardDeviationTime = sqrt(squaredDifTime / numLoops)
+        telemetry.addData("SD For Average Time: ", standardDeviationTime)
+        loopElapsedTime.reset()
+
         telemetry.update()
     }
 
