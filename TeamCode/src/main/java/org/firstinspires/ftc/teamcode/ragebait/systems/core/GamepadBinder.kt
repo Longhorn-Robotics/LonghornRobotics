@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.ragebait.systems.core
 
 import  com.qualcomm.robotcore.hardware.Gamepad
+import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.EnumBucket
+import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.ExhaustiveEnumMap
+import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.enumBucket
+import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.exhaustiveEnumMap
 
 class GamepadBinder(
     val gamepad: Gamepad
