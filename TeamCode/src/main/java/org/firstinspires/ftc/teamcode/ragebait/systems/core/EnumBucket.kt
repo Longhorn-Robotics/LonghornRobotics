@@ -1,4 +1,8 @@
-package org.firstinspires.ftc.teamcode.ragebait.systems
+<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ragebait/systems/core/EnumBucket.kt
+package org.firstinspires.ftc.teamcode.ragebait.systems.core
+========
+package org.firstinspires.ftc.teamcode.ragebait.systems.core.utils
+>>>>>>>> origin/homelib_indev:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ragebait/systems/core/utils/EnumBucket.kt
 
 import java.util.EnumMap
 import kotlin.enums.EnumEntries
@@ -12,7 +16,7 @@ inline fun <reified K : Enum<K>, T> exhaustiveEnumMap(noinline init: (K) -> T): 
 /**
  * A class that provides an enum map guaranteed to be exhaustive.
  * Allowing use of indexing as purely non-null (unless you chose to
- * make `T` a nullable type for some unexplained reason
+ * make `T` a nullable type for some unexplained reason.
  * */
 class ExhaustiveEnumMap<K: Enum<K>, T>(private val kClass: Class<K>, private val entries: EnumEntries<K>, init: (K) -> T) {
     private val enumMap by lazy {

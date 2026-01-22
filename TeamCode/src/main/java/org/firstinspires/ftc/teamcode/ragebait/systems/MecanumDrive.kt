@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import org.firstinspires.ftc.teamcode.ragebait.systems.core.SubSystem
 
 class MecanumDrive(
     opMode: OpMode,
@@ -14,6 +15,8 @@ class MecanumDrive(
     val motorBRHWMapName: String = "motorBR",
     val motorBLHWMapName: String = "motorBL",
 ) : SubSystem(opMode) {
+
+    private val dependencyCell: OuttakeLauncher by DependencyCell()
 
     private fun initMotor(name: String): DcMotorEx {
         val motor = opMode.hardwareMap.get<DcMotorEx>(DcMotorEx::class.java, name)
@@ -38,6 +41,8 @@ class MecanumDrive(
         motorFL.direction = DcMotorSimple.Direction.FORWARD
         motorBR.direction = DcMotorSimple.Direction.REVERSE
         motorBL.direction = DcMotorSimple.Direction.FORWARD
+
+        dependencyCell.outtakeOn = true;
     }
 
     // This brings up an interesting design question in the subsystems; Some should distance themselves
