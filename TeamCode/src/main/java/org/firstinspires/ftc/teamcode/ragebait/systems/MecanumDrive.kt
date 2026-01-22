@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.SubSystem
+import org.firstinspires.ftc.teamcode.ragebait.systems.core.DependencyCell
 
 class MecanumDrive(
     opMode: OpMode,
@@ -16,7 +17,7 @@ class MecanumDrive(
     val motorBLHWMapName: String = "motorBL",
 ) : SubSystem(opMode) {
 
-    private val dependencyCell: OuttakeLauncher by DependencyCell()
+    private val dependencyCell: LegacyOuttakeLauncher by DependencyCell(this)
 
     private fun initMotor(name: String): DcMotorEx {
         val motor = opMode.hardwareMap.get<DcMotorEx>(DcMotorEx::class.java, name)

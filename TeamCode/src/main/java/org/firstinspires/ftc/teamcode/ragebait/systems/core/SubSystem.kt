@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.ragebait.systems.core
 
-import android.R
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
-import java.util.Objects.toString
 import kotlin.reflect.KClass
 
 abstract class SubSystem(
@@ -38,6 +36,10 @@ abstract class SubSystem(
     //  - These can be handled by just not considering them during resolution
 
     companion object {
+
+        val defaultOpMode by lazy {
+            systemEnumeration.inv[0]!!.opMode
+        }
 
         var systemCount = 0;
         val systemEnumeration = BiMap<SubSystem, Int>()
