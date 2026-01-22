@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ragebait/systems/core/EnumBucket.kt
 package org.firstinspires.ftc.teamcode.ragebait.systems.core
+========
+package org.firstinspires.ftc.teamcode.ragebait.systems.core.utils
+>>>>>>>> origin/homelib_indev:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ragebait/systems/core/utils/EnumBucket.kt
 
 import java.util.EnumMap
 import kotlin.enums.EnumEntries
