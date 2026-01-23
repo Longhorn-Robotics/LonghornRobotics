@@ -73,7 +73,7 @@ class TeleopCameraProf : OpMode() {
         telemetry.addData("Encoder value 3: ", encoderTest.currentPosition)
 
         //Getting Cam
-        camPose = GetPoseFromCamera.getPose("pedropathing")
+        camPose = GetPoseFromCamera.getPose(GetPoseFromCamera.PoseType.PEDROPATHING)
 
         //Current time
         currentTime = loopElapsedTime.seconds()

@@ -7,6 +7,7 @@ import com.pedropathing.ftc.InvertedFTCCoordinates
 import com.pedropathing.ftc.PoseConverter
 import com.pedropathing.geometry.PedroCoordinates
 import com.pedropathing.geometry.Pose
+import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection
@@ -24,11 +25,13 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import java.lang.String
 
 import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName
 import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareLite
 
 
 object GetPoseFromCamera {
     const val USING_WEBCAM: Boolean = true
+    private lateinit var camera: CameraName
     private val visionPortal: VisionPortal by lazy {
         //var robot = RobotHardwareYousef()
         var robot = RobotHardwareLite()
@@ -58,6 +61,9 @@ object GetPoseFromCamera {
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag)
+
+        // Set the camera used for building
+        builder.setCamera(camera)
 
         // Build the Vision Portal, using the above settings.
         val tempPortal = builder.build() ?: throw Error();
@@ -89,8 +95,13 @@ object GetPoseFromCamera {
     //Telemetry Solution
     lateinit var telemetry: Telemetry
 
+    enum class PoseType {
+        FTC,
+        PEDROPATHING
+    }
+
     @SuppressLint("DefaultLocale")
-    fun getPose(poseType : kotlin.String): Pose? {
+    fun getPose(poseType : PoseType): Pose? {
         //TODO("Not yet implemented")
         // Considerations:
         // Make this asynchronous, able to run from another thread/as a non-blocking coroutine
@@ -98,7 +109,7 @@ object GetPoseFromCamera {
 
         //waitForStart();
 
-        visionPortal?.resumeStreaming()
+        visionPortal.resumeStreaming()
 
         val currentDetections: List<AprilTagDetection> = aprilTag!!.detections
         telemetry.addData("# AprilTags Detected", currentDetections.size)
@@ -156,25 +167,19 @@ object GetPoseFromCamera {
         // Add "key" information to telemetry
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.")
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)")
-        // Format ftcPose to PedroPathing coordinate system using PedroCoordinates.INSTANCE
-        pedroPathingPose = ftcPose?.getAsCoordinateSystem(PedroCoordinates.INSTANCE)
 
         // Return different-formatted pose based on argument passed into function
         return when (poseType) {
-            "ftc" -> {
-                ftcPose
-            }
-            "pedropathing" -> {
-                pedroPathingPose
-            }
-            else -> {
-                throw IllegalArgumentException()
-            }
+            PoseType.FTC -> ftcPose
+            // Format ftcPose to PedroPathing coordinate system using PedroCoordinates.INSTANCE
+            PoseType.PEDROPATHING -> ftcPose?.getAsCoordinateSystem(PedroCoordinates.INSTANCE)
         }
     }
 
-    fun initAprilTag(robot: RobotHardwareLite, tel: Telemetry) {
+    fun initAprilTag(hardwareCamera: CameraName, tel: Telemetry) {
         this.telemetry = tel
+
+        camera = hardwareCamera
 
         val ourLib = AprilTagLibrary.Builder()
             .addTag(
@@ -223,7 +228,6 @@ object GetPoseFromCamera {
         // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
         // Note: Decimation can be changed on-the-fly to adapt during a match.
         aprilTag?.setDecimation(3f)
-
 
         // Disable or re-enable the aprilTag processor at any time.
         visionPortal.setProcessorEnabled(aprilTag, true)
