@@ -39,8 +39,20 @@ abstract class SubSystem(
     companion object {
 
         val defaultOpMode by lazy {
-            systemEnumeration.inv[0]!!.opMode
+            systemEnumeration.inv[0]?.opMode ?: throw NullPointerException("No subsystems initialized, tried to get opmode!")
         }
+
+        val reservedHardware = mutableSetOf<String>()
+        inline fun <reified T>getHardwareStrict(name: String): T? {
+            if (name in reservedHardware)
+                return null
+            else {
+                reservedHardware.add(name)
+                return SubSystem.defaultOpMode.hardwareMap.get(T::class.java, name) ?: throw NullPointerException("Hardware not found")
+            }
+        }
+        inline fun <reified T>getHardware(name: String): T =
+            SubSystem.defaultOpMode.hardwareMap.get(T::class.java, name) ?: throw NullPointerException("Hardware not found")
 
         var systemCount = 0;
         val systemEnumeration = BiMap<SubSystem, Int>()
@@ -51,6 +63,7 @@ abstract class SubSystem(
             depLinks[dependent]!!.add(dependency)
         }
 
+        lateinit var systems: Array<SubSystem>
         fun doInitializations() {
             // Generate an actual graph
             // Adjacency list, graph[system] = setOf(deps)
@@ -100,7 +113,14 @@ abstract class SubSystem(
             initList.forEach{
                 systemEnumeration.inv[it]!!.init()
             }
+
+            systems = initList.map{ systemEnumeration.inv[it]!! }.toTypedArray()
         }
+
+        fun doLoops() = systems.forEach { it.loop() }
+        fun doStops() = systems.forEach { it.stop() }
+
+        inline fun <reified T: SubSystem> getSys(): T = (systemClassMap[T::class] ?: throw NullPointerException("")) as T
     }
 
     init {

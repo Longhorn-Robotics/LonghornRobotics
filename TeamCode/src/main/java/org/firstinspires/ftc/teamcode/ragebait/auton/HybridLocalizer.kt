@@ -26,7 +26,7 @@ class HybridLocalizer(val hwmap: HardwareMap, val wheelConstants: ThreeWheelCons
     private var odoPose : Pose? = null
 
     override fun getPose(): Pose {
-       camPose = GetPoseFromCamera.getPose("pedropathing")
+       camPose = GetPoseFromCamera.getPose(GetPoseFromCamera.PoseType.PEDROPATHING)
        odoPose = threeWheel.pose
        val newPoseX: Double? = odoPose?.x?.times(1 - weight)?.plus(camPose!!.x.times(weight))
        val newPoseY: Double? = odoPose?.y?.times(1 - weight)?.plus(camPose!!.y.times(weight))

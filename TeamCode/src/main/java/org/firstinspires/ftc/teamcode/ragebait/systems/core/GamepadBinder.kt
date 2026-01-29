@@ -95,30 +95,30 @@ class GamepadBinder(
         right_trigger,
     }
 
-    fun getAnalog(analog: Analog): Float = when (analog) {
+    fun getAnalog(analog: Analog): Double = when (analog) {
         Analog.left_stick_x -> gamepad.left_stick_x
         Analog.left_stick_y -> gamepad.left_stick_y
         Analog.right_stick_x -> gamepad.right_stick_x
         Analog.right_stick_y -> gamepad.right_stick_y
         Analog.left_trigger -> gamepad.left_trigger
         Analog.right_trigger -> gamepad.right_trigger
-    }
+    }.toDouble()
 
-    private val analogBinds: EnumBucket<Analog, Pair<(Float) -> Unit, (Float) -> Float>> = enumBucket()
+    private val analogBinds: EnumBucket<Analog, Pair<(Double) -> Unit, (Double) -> Double>> = enumBucket()
 
     /**
      * Analog bindings don't directly use actions; they simply run a consumer for when the value
      * gets updated.
      * For example, you could bind that setter for a property in a subsystem to control via a stick
      * */
-    fun bind_analog(analog: Analog, consumer: (Float) -> Unit, processor: (Float) -> Float = { it }) {
+    fun bind_analog(analog: Analog, consumer: (Double) -> Unit, processor: (Double) -> Double = { it }) {
         analogBinds[analog].add(Pair(consumer, processor))
     }
 
     private val triggerActuationValue = 0.6
     private val triggerDeActuationValue = 0.4
 
-    private fun handleActuatedTrigger(button: Button, curValue: Float): Boolean =
+    private fun handleActuatedTrigger(button: Button, curValue: Double): Boolean =
         if (buttonCurrentStates[button]) {
             curValue > triggerDeActuationValue
         } else {
@@ -141,8 +141,8 @@ class GamepadBinder(
             Button.guide -> gamepad.guide
             Button.left_stick_button -> gamepad.left_stick_button
             Button.right_stick_button -> gamepad.right_stick_button
-            Button.left_trigger -> handleActuatedTrigger(Button.left_trigger, gamepad.left_trigger)
-            Button.right_trigger -> handleActuatedTrigger(Button.right_trigger, gamepad.right_trigger)
+            Button.left_trigger -> handleActuatedTrigger(Button.left_trigger,gamepad.left_trigger.toDouble())
+            Button.right_trigger -> handleActuatedTrigger(Button.right_trigger, gamepad.right_trigger.toDouble())
     }
 
     private val buttonLastStates: ExhaustiveEnumMap<Button, Boolean> = exhaustiveEnumMap { false }
@@ -208,7 +208,7 @@ class GamepadBinder(
         }
     }
 
-    private val analogLastValues: ExhaustiveEnumMap<Analog, Float> = exhaustiveEnumMap { 0.0f }
+    private val analogLastValues: ExhaustiveEnumMap<Analog, Double> = exhaustiveEnumMap { 0.0 }
     private fun handleAnalogBinds() {
         Analog.entries.forEach { analog ->
             val value = getAnalog(analog)

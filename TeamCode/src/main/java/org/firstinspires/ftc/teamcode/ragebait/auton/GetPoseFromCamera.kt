@@ -71,6 +71,8 @@ object GetPoseFromCamera {
         // Disable or re-enable the aprilTag processor at any time.
         tempPortal.setProcessorEnabled(aprilTag, true)
 
+        tempPortal.resumeStreaming()
+
         tempPortal
     }
     private var aprilTag: AprilTagProcessor? = null
@@ -102,21 +104,17 @@ object GetPoseFromCamera {
 
     @SuppressLint("DefaultLocale")
     fun getPose(poseType : PoseType): Pose? {
-        //TODO("Not yet implemented")
-        // Considerations:
-        // Make this asynchronous, able to run from another thread/as a non-blocking coroutine
-        // Add whatever args necessary
-
-        //waitForStart();
-
-        visionPortal.resumeStreaming()
+        // visionPortal.resumeStreaming()
 
         val currentDetections: List<AprilTagDetection> = aprilTag!!.detections
         telemetry.addData("# AprilTags Detected", currentDetections.size)
 
         var ftcPose: Pose? = null
-        var pedroPathingPose: Pose? = null
 
+        // TODO: Refactor this to final form and stuff
+        // We get multiple detections; We will discard all mosaic detections, since we don't care
+        // and then we prioritize the latest detection time; If they're all from the same time,
+        // then we average out the positions.
         // Step through the list of detections and display info for each one.
         for (detection in currentDetections) {
             if (detection.metadata != null) {

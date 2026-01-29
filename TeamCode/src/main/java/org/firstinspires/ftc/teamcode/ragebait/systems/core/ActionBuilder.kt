@@ -110,7 +110,7 @@ class ActionBuilder private constructor(
         }
 
         // TODO: Nested Sequence
-        // Make a sequence that undoes on interrupt by procedurally making each next action stop
+        // Make a sequence that undoes on interrupt by unwinding the stop actions
     }
 
     private enum class CompositionType {
