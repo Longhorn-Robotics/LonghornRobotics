@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.ragebait.auton.GetPoseFromCamera
+import org.firstinspires.ftc.teamcode.ragebait.utils.ButtonAction
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 
@@ -41,9 +44,21 @@ class TeleopCameraProf : OpMode() {
 
     //Elapsed Time
     private val loopElapsedTime = ElapsedTime()
-    private val lastCameraElapsedTime = ElapsedTime()
 
     val hub: LynxModule by lazy { hardwareMap.getAll(LynxModule::class.java)[0] }
+
+    private val buttonActions = arrayOf(
+        //Reset Data Button
+        ButtonAction({ gamepad1.cross || gamepad2.cross }, {
+            currentTime = 0.0
+            avgTime = 0.0
+            squaredDifTime = 0.0
+            standardDeviationTime = 0.0
+            numLoops = 0
+
+            loopElapsedTime.reset()
+        }),
+    )
     // Code to run once when the driver hits INIT
     override fun init() {
         GetPoseFromCamera.initAprilTag(hardwareMap.get(WebcamName::class.java, "Webcam 1"), telemetry)
@@ -60,11 +75,12 @@ class TeleopCameraProf : OpMode() {
     // Code to run ONCE when the driver hits PLAY
     override fun start() {
         loopElapsedTime.reset()
-        lastCameraElapsedTime.reset()
     }
 
     // Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
     override fun loop() {
+
+        ButtonAction.doActions(buttonActions)
 
         hub.clearBulkCache()
 

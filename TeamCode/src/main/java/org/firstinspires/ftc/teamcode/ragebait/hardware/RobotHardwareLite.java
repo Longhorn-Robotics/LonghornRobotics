@@ -11,8 +11,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 public class RobotHardwareLite {
     HardwareMap hwMap;
-    public DcMotorEx motor1Test;
-    public DcMotorEx motor2Test;
+    public DcMotorEx motorOut;
+    public DcMotorEx motorCog;
 
     public WebcamName cam;
 
@@ -24,16 +24,16 @@ public class RobotHardwareLite {
         hwMap = ahwMap;
 
         //Motor 1 Test
-        motor1Test = hwMap.get(DcMotorEx.class, "motor1");
-        motor1Test.setDirection(DcMotor.Direction.FORWARD);
-        motor1Test.setPower(0);
-        motor1Test.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorOut = hwMap.get(DcMotorEx.class, "motorOut");
+        motorOut.setDirection(DcMotor.Direction.FORWARD);
+        motorOut.setPower(0);
+        motorOut.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Motor 2 Test
-        motor2Test = hwMap.get(DcMotorEx.class, "motor2");
-        motor2Test.setDirection(DcMotor.Direction.FORWARD);
-        motor2Test.setPower(0);
-        motor2Test.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorCog = hwMap.get(DcMotorEx.class, "motorCog");
+        motorCog.setDirection(DcMotor.Direction.FORWARD);
+        motorCog.setPower(0);
+        motorCog.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Camera
         cam = hwMap.get(WebcamName.class, "Webcam 1");
