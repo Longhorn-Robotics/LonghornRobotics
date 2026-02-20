@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.ragebait.systems
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.SubSystem
-import org.firstinspires.ftc.teamcode.ragebait.systems.core.DependencyCell
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.hardware.Motor
 
+@Suppress("unused", "CanBeParameter")
 class MecanumDrive(
     opMode: OpMode,
     val normalSpeed: Double = 1.3,
@@ -16,7 +14,7 @@ class MecanumDrive(
     val motorFLHWMapName: String = "motorFL",
     val motorBRHWMapName: String = "motorBR",
     val motorBLHWMapName: String = "motorBL",
-) : SubSystem(opMode) {
+) : SubSystem() {
 
     // private val dependencyCell: LegacyOuttakeLauncher by DependencyCell(this)
 

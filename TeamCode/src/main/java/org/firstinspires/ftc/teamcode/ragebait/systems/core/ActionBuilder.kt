@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.ragebait.systems.core
 
+@Suppress("unused")
 class ActionBuilder private constructor(
     val name: String,
     private val compositionType: CompositionType,
     private val contextList: ArrayList<Action>,
 ) {
 
-    constructor(name: String) : this(name, CompositionType.Single, arrayListOf()) {}
+    constructor(name: String) : this(name, CompositionType.Single, arrayListOf())
 
     // The composite actions work slightly differently
     // Interruptions simply interrupt the current action(s).
@@ -28,6 +29,11 @@ class ActionBuilder private constructor(
         // “A closure is a poor man’s object; an object is a poor man’s closure”
 
         /**
+         * Creates an action that runs a single callback on init and then stops
+         * */
+        fun simple(name: String, callback: () -> Unit): Action = ActionBuilder(name).init(callback).loop{false}.end{}.build()
+
+        /**
          * Create a composite action that runs several actions in parallel.
          * Ends once all the actions end. Depending on the update order is
          * undefined behavior.
@@ -37,7 +43,7 @@ class ActionBuilder private constructor(
          * @param restartable Whether this action is restartable
          * @return The composite parallel action
          * */
-        fun Parallel(
+        fun parallel(
             name: String,
             actionList: ArrayList<Action>,
             interruptible: Boolean = true,
@@ -77,7 +83,7 @@ class ActionBuilder private constructor(
          * @param restartable Whether this action is restartable
          * @return The composite parallel action
          * */
-        fun Sequenced(
+        fun sequenced(
             name: String,
             actionList: ArrayList<Action>,
             interruptible: Boolean = true,
@@ -183,8 +189,8 @@ class ActionBuilder private constructor(
         val finalName = masterName ?: contextList.first().name
         return when (compositionType) {
             CompositionType.Single -> built
-            CompositionType.Parallel -> Parallel(finalName, contextList)
-            CompositionType.Sequenced -> Sequenced(finalName, contextList)
+            CompositionType.Parallel -> parallel(finalName, contextList)
+            CompositionType.Sequenced -> sequenced(finalName, contextList)
         }
     }
 }

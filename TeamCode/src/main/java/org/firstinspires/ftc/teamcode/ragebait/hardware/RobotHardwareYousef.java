@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.ragebait.hardware;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -8,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
+@SuppressWarnings("unused")
 public class RobotHardwareYousef {
     HardwareMap hwMap;
 
@@ -27,15 +27,16 @@ public class RobotHardwareYousef {
 
     public WebcamName cam;
 
-    private ElapsedTime period = new ElapsedTime();
-    public double kickerOutPosition = 0.0419;
-    public double kickerInPosition = 0.2358;
+    private final ElapsedTime period = new ElapsedTime();
+    public final double kickerOutPosition = 0.0419;
+    public final double kickerInPosition = 0.2358;
 
-    public double flickerOutPosition = 0.35;
-    public double flickerInPosition = 0.17;
+    public final double flickerOutPosition = 0.35;
+    public final double flickerInPosition = 0.17;
 
     public RobotHardwareYousef() {}
 
+    @SuppressWarnings("CommentedOutCode")
     public void init(HardwareMap ahwMap) {
         // Save reference to hardware map
         hwMap = ahwMap;

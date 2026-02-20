@@ -3,10 +3,11 @@ package org.firstinspires.ftc.teamcode.ragebait.utils;
 import java.util.function.BooleanSupplier;
 
 public class ButtonAction {
-    BooleanSupplier condition;
+    final BooleanSupplier condition;
     Boolean lastState;
-    Runnable action;
+    final Runnable action;
 
+    @SuppressWarnings("unused")
     public ButtonAction(BooleanSupplier buttonCondition, Runnable buttonAction) {
         condition = buttonCondition;
         lastState = false;

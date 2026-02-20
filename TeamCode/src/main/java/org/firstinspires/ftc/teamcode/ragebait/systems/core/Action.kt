@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode.ragebait.systems.core
  * @property restartable: Whether calling `start` on an action already running action will cancel
  * the current action and restart it
  * @property interruptible: Masks whether interrupt works on this method or not.
+ * @property loop: Function to execute every loop, returns false when action done.
  * */
 class Action(
     val name: String,
@@ -16,11 +17,28 @@ class Action(
     startRunning: Boolean = false
     ) {
 
+    companion object {
+        val actionList = arrayListOf<Action>()
+
+        fun clear() {
+            actionList.clear()
+        }
+
+        // TODO: Integrate this with error system
+        fun doUpdates() {
+            actionList.forEach { it.update() }
+        }
+    }
+
+    init {
+        actionList.add(this)
+    }
+
     var running: Boolean = false
             private set
     // Whether we're about to start running
-    private var toRun = false;
-    private var toInterrupt = false;
+    private var toRun = false
+    private var toInterrupt = false
 
     init {
         running = startRunning

@@ -15,6 +15,7 @@ import kotlin.math.min
 
 @Configurable
 @TeleOp(name = "Outake PID Tuner", group = "Testing")
+@Suppress("unused")
 class OutakePIDTuner : OpMode() {
     companion object {
         // Tuned on 21/11/25 by Teo at 0.7 power
@@ -44,15 +45,15 @@ class OutakePIDTuner : OpMode() {
     var targetFlywheelSpeed: Double = 0.0
 
 
-    var outtakeOn: Boolean = false;
+    var outtakeOn: Boolean = false
 
     private val pidElapsedTime = ElapsedTime()
     private val buttonElapsedTime = ElapsedTime()
 
     // Kicker
     var isKickerExtended: Boolean = false
-    var x_pressed_gmpd1: Boolean = false
-    var circle_pressed: Boolean = false
+    var xPressedGmpd1: Boolean = false
+    var circlePressed: Boolean = false
     var isGunAdd: Boolean = false
     var isGunSubtract: Boolean = false
 
@@ -112,24 +113,24 @@ class OutakePIDTuner : OpMode() {
             robot.motorOutL.power = fly2pid
         }
 
-        if (gamepad1.circle && !circle_pressed) {
-            outtakeOn = !outtakeOn;
+        if (gamepad1.circle && !circlePressed) {
+            outtakeOn = !outtakeOn
         }
-        circle_pressed = gamepad1.circle;
+        circlePressed = gamepad1.circle
 
         //KICKER
-        if (gamepad1.cross && !x_pressed_gmpd1) {
-            isKickerExtended = !isKickerExtended;
-            buttonElapsedTime.reset();
+        if (gamepad1.cross && !xPressedGmpd1) {
+            isKickerExtended = !isKickerExtended
+            buttonElapsedTime.reset()
         } else if (buttonElapsedTime.seconds() > 0.5) {
-            isKickerExtended = false;
+            isKickerExtended = false
         }
-        x_pressed_gmpd1 = gamepad1.cross;
+        xPressedGmpd1 = gamepad1.cross
 
         if (isKickerExtended) {
-            robot.kicker.setPosition(0.07); //0.55
-        } else if (!isKickerExtended) {
-            robot.kicker.setPosition(0.247); //0.73
+            robot.kicker.position = 0.07 //0.55
+        } else {
+            robot.kicker.position = 0.247 //0.73
         }
 
         panelsTelemetry.debug("Target Speed: $targetFlywheelSpeed")

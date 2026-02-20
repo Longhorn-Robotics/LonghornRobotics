@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.ragebait.teleop
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.ragebait.auton.GetPoseFromCamera
 import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareYousef
 import org.firstinspires.ftc.teamcode.ragebait.utils.ButtonAction
 import org.firstinspires.ftc.teamcode.ragebait.utils.PIDController
@@ -11,6 +10,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 @TeleOp(name = "TeleopYousef", group = "Real OpMode")
+@Suppress("unused")
 class TeleopYousef : OpMode() {
     var robot: RobotHardwareYousef = RobotHardwareYousef()
 

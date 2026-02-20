@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.ragebait.systems
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.DependencyCell
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.SubSystem
 
-class OuttakeLauncher(opMode: OpMode) : SubSystem(opMode) {
+@Suppress("unused")
+class OuttakeLauncher() : SubSystem() {
 
-    val localizer: PedroPathingLocalizer by DependencyCell(this);
+    val localizer: PedroPathingLocalizer by DependencyCell(this)
 
     override fun init() {
     }

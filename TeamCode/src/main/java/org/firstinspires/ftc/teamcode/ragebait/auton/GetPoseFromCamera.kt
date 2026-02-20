@@ -2,22 +2,16 @@ package org.firstinspires.ftc.teamcode.ragebait.auton
 
 import android.annotation.SuppressLint
 import android.util.Size
-import com.pedropathing.ftc.FTCCoordinates
 import com.pedropathing.ftc.InvertedFTCCoordinates
 import com.pedropathing.ftc.PoseConverter
 import com.pedropathing.geometry.PedroCoordinates
 import com.pedropathing.geometry.Pose
-import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 import org.firstinspires.ftc.robotcore.external.navigation.Position
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles
-import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareYousef
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary
@@ -29,6 +23,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName
 import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareLite
 
 
+@Suppress("unused")
 object GetPoseFromCamera {
     const val USING_WEBCAM: Boolean = true
     private lateinit var camera: CameraName
@@ -66,7 +61,7 @@ object GetPoseFromCamera {
         builder.setCamera(camera)
 
         // Build the Vision Portal, using the above settings.
-        val tempPortal = builder.build() ?: throw Error();
+        val tempPortal = builder.build() ?: throw Error()
 
         // Disable or re-enable the aprilTag processor at any time.
         tempPortal.setProcessorEnabled(aprilTag, true)
@@ -86,10 +81,10 @@ object GetPoseFromCamera {
     var capReqTime: Long = 0
 
     //Camera Values
-    var fx: Double = 1415.979838;
-    var fy: Double = 1411.104157;
-    var cx: Double = 644.1777;
-    var cy: Double = 357.2814359;
+    var fx: Double = 1415.979838
+    var fy: Double = 1411.104157
+    var cx: Double = 644.1777
+    var cy: Double = 357.2814359
 
     private val cameraPosition: Position = Position(DistanceUnit.INCH, 0.0, 0.0, 0.0, 0)
     private val cameraOrientation = YawPitchRollAngles(AngleUnit.DEGREES, 0.0, 0.0, 0.0, 0)
@@ -141,7 +136,7 @@ object GetPoseFromCamera {
                         detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)
                     )
                 )
-                val pose2d: Pose2D = Pose2D(
+                val pose2d= Pose2D(
                     DistanceUnit.INCH,
                     detection.ftcPose.x,
                     detection.ftcPose.y,

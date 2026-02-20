@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.ragebait.systems
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
@@ -8,7 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.SubSystem
 import org.firstinspires.ftc.teamcode.ragebait.utils.PIDController
 
-class LegacyOuttakeLauncher(opMode: OpMode) : SubSystem(opMode) {
+@Suppress("unused")
+class LegacyOuttakeLauncher() : SubSystem() {
     var targetFlywheelPower: Double = 0.65
     var targetFlywheelSpeed: Double
         get() = if (outtakeOn) targetFlywheelPower * 2800 else 0.0
@@ -25,7 +25,7 @@ class LegacyOuttakeLauncher(opMode: OpMode) : SubSystem(opMode) {
     var outtakeOn: Boolean = false
 
     private fun initMotor(name: String): DcMotorEx {
-        val motor = opMode.hardwareMap.get<DcMotorEx>(DcMotorEx::class.java, name)
+        val motor = opMode.hardwareMap.get(DcMotorEx::class.java, name)
         motor.power = 0.0
         motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT

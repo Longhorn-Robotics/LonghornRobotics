@@ -16,6 +16,7 @@ import com.pedropathing.localization.Localizer
 import com.pedropathing.math.Vector
 import com.qualcomm.robotcore.hardware.HardwareMap
 
+@Suppress("CanBeParameter", "unused")
 class HybridLocalizer(val hwmap: HardwareMap, val wheelConstants: ThreeWheelConstants) : Localizer {
 
     private val threeWheel = ThreeWheelLocalizer(hwmap, wheelConstants)

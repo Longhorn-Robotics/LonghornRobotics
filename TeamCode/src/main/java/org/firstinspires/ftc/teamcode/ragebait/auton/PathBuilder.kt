@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.ragebait.auton
 
-import androidx.annotation.NonNull
 import com.pedropathing.follower.Follower
 import com.pedropathing.geometry.BezierCurve
 import com.pedropathing.geometry.Pose

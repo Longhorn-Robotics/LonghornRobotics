@@ -12,8 +12,9 @@ import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@SuppressWarnings("unused")
 public class Constants {
-    public static FollowerConstants followerConstants = new FollowerConstants()
+    public static final FollowerConstants followerConstants = new FollowerConstants()
             .mass(10.07)
             .forwardZeroPowerAcceleration(-34.543025)
             .lateralZeroPowerAcceleration(-47.6598)
@@ -42,7 +43,7 @@ public class Constants {
             )
             .centripetalScaling(0.05);
 
-    public static MecanumConstants driveConstants = new MecanumConstants()
+    public static final MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("motorFR")
             .rightRearMotorName("motorBR")
@@ -55,7 +56,7 @@ public class Constants {
             .xVelocity(60.77333)
             .yVelocity(50.62893);
 
-    public static ThreeWheelConstants localizerConstants = new ThreeWheelConstants()
+    public static final ThreeWheelConstants localizerConstants = new ThreeWheelConstants()
             .forwardTicksToInches(0.001995713)
             .strafeTicksToInches(0.00202160515453)
             .turnTicksToInches(0.00202342663333)
@@ -69,7 +70,7 @@ public class Constants {
             .rightEncoderDirection(Encoder.FORWARD)
             .strafeEncoderDirection(Encoder.FORWARD);
 
-    public static PathConstraints pathConstraints = new PathConstraints(
+    public static final PathConstraints pathConstraints = new PathConstraints(
             0.99,
             100,
             1,

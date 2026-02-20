@@ -9,8 +9,8 @@ package org.firstinspires.ftc.teamcode.ragebait.systems.core.utils
  * @param <V> the type of values in the map
  */
 class BiMap<K, V> {
-    private val map = mutableMapOf<K,V>()
-    private val invMap = mutableMapOf<V,K>()
+    private val map = mutableMapOf<K, V>()
+    private val invMap = mutableMapOf<V, K>()
 
     operator fun get(key: K): V? = map[key]
     operator fun set(key: K, value: V) {
@@ -18,7 +18,7 @@ class BiMap<K, V> {
         invMap[value] = key
     }
 
-    class InverseMap<K,V>(
+    class InverseMap<K, V>(
         val outer: BiMap<K, V>
     ) {
         operator fun get(value: V): K? = outer.invMap[value]
@@ -28,5 +28,10 @@ class BiMap<K, V> {
         }
     }
 
-    val inv = InverseMap<K,V>(this)
+    val inv = InverseMap(this)
+
+    fun clear() {
+        map.clear()
+        invMap.clear()
+    }
 }

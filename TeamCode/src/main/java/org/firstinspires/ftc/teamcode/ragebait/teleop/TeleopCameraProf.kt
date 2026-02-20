@@ -10,8 +10,6 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.ragebait.auton.GetPoseFromCamera
 import org.firstinspires.ftc.teamcode.ragebait.utils.ButtonAction
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sqrt
 
 
@@ -30,6 +28,7 @@ import kotlin.math.sqrt
 // BIG MONEY
 
 
+@Suppress("unused")
 @TeleOp(name = "TeleopCameraProf", group = "Testing")
 class TeleopCameraProf : OpMode() {
 

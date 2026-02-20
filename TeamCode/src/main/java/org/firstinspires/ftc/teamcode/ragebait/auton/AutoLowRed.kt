@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ragebait.auton
 import com.pedropathing.geometry.Pose
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 
+@Suppress("unused")
 @Autonomous(name = "AutoLowRed", group = "Auto")
 class AutoLowRed : AutoLowBlue() {
     override val startPose  = Pose(90.557, 9.5, Math.toRadians(90.0))

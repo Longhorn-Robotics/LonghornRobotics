@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.firstinspires.ftc.teamcode.ragebait.systems.core
 
 import  com.qualcomm.robotcore.hardware.Gamepad
@@ -7,8 +9,10 @@ import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.enumBucket
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.exhaustiveEnumMap
 
 class GamepadBinder(
-    val gamepad: Gamepad
+    // This is a closure to support hot-reloading gamepads, reconnecting mid-opmode, e.t.c.
+    var gamepad: () -> Gamepad?
 ) {
+    @Suppress("EnumEntryName")
     enum class Button {
         cross,
         square,
@@ -42,7 +46,7 @@ class GamepadBinder(
      * Makes the action start on the rising edge, interrupt on the
      * falling edge. Can be inverted with `invert`
      * */
-    fun bind_button_full(button: Button, invert: Boolean, action: Action): GamepadBinder {
+    fun bindButtonFull(button: Button, invert: Boolean, action: Action): GamepadBinder {
         if (!invert) {
             fullBinds[button].add(action)
         } else {
@@ -58,7 +62,7 @@ class GamepadBinder(
      * Currently does not support toggling on the falling edge (I'm genuinely curious as to if that's
      * ever desired behavior)
      * */
-    fun bind_button_toggle(button: Button, invert: Boolean, action: Action): GamepadBinder {
+    fun bindButtonToggle(button: Button, invert: Boolean, action: Action): GamepadBinder {
         if (!invert) {
             toggleBinds[button].add(action)
         } else {
@@ -72,7 +76,7 @@ class GamepadBinder(
      * Does not cancel the action if button released
      * Beware of restarting actions, currently undefined behavior
      * */
-    fun bind_button_press(button: Button, action: Action): GamepadBinder {
+    fun bindButtonPress(button: Button, action: Action): GamepadBinder {
         pressBinds[button].add(action)
         return this
     }
@@ -81,11 +85,12 @@ class GamepadBinder(
      * Binds an action to the falling edge of a button press
      * Does not cancel the action if button released
      * */
-    fun bind_button_release(button: Button, action: Action): GamepadBinder {
+    fun bindButtonRelease(button: Button, action: Action): GamepadBinder {
         releaseBinds[button].add(action)
         return this
     }
 
+    @Suppress("EnumEntryName")
     enum class Analog {
         left_stick_x,
         left_stick_y,
@@ -95,23 +100,30 @@ class GamepadBinder(
         right_trigger,
     }
 
-    fun getAnalog(analog: Analog): Double = when (analog) {
-        Analog.left_stick_x -> gamepad.left_stick_x
-        Analog.left_stick_y -> gamepad.left_stick_y
-        Analog.right_stick_x -> gamepad.right_stick_x
-        Analog.right_stick_y -> gamepad.right_stick_y
-        Analog.left_trigger -> gamepad.left_trigger
-        Analog.right_trigger -> gamepad.right_trigger
-    }.toDouble()
+    fun getAnalog(analog: Analog): Double = gamepad()?.let {
+        when (analog) {
+            Analog.left_stick_x -> it.left_stick_x
+            Analog.left_stick_y -> it.left_stick_y
+            Analog.right_stick_x -> it.right_stick_x
+            Analog.right_stick_y -> it.right_stick_y
+            Analog.left_trigger -> it.left_trigger
+            Analog.right_trigger -> it.right_trigger
+        }.toDouble()
+    } ?: 0.0
 
-    private val analogBinds: EnumBucket<Analog, Pair<(Double) -> Unit, (Double) -> Double>> = enumBucket()
+    private val analogBinds: EnumBucket<Analog, Pair<(Double) -> Unit, (Double) -> Double>> =
+        enumBucket()
 
     /**
      * Analog bindings don't directly use actions; they simply run a consumer for when the value
      * gets updated.
      * For example, you could bind that setter for a property in a subsystem to control via a stick
      * */
-    fun bind_analog(analog: Analog, consumer: (Double) -> Unit, processor: (Double) -> Double = { it }) {
+    fun bindAnalog(
+        analog: Analog,
+        consumer: (Double) -> Unit,
+        processor: (Double) -> Double = { it }
+    ) {
         analogBinds[analog].add(Pair(consumer, processor))
     }
 
@@ -125,28 +137,38 @@ class GamepadBinder(
             curValue > triggerActuationValue
         }
 
-    fun getButtonValue(button: Button): Boolean = when (button) {
-            Button.cross -> gamepad.cross
-            Button.square -> gamepad.square
-            Button.circle -> gamepad.circle
-            Button.triangle -> gamepad.triangle
-            Button.right_bumper -> gamepad.right_bumper
-            Button.left_bumper -> gamepad.left_bumper
-            Button.dpad_up -> gamepad.dpad_up
-            Button.dpad_down -> gamepad.dpad_down
-            Button.dpad_left -> gamepad.dpad_left
-            Button.dpad_right -> gamepad.dpad_right
-            Button.share -> gamepad.share
-            Button.option -> gamepad.options
-            Button.guide -> gamepad.guide
-            Button.left_stick_button -> gamepad.left_stick_button
-            Button.right_stick_button -> gamepad.right_stick_button
-            Button.left_trigger -> handleActuatedTrigger(Button.left_trigger,gamepad.left_trigger.toDouble())
-            Button.right_trigger -> handleActuatedTrigger(Button.right_trigger, gamepad.right_trigger.toDouble())
-    }
+    fun getButtonValue(button: Button): Boolean = gamepad()?.let {
+        when (button) {
+            Button.cross -> it.cross
+            Button.square -> it.square
+            Button.circle -> it.circle
+            Button.triangle -> it.triangle
+            Button.right_bumper -> it.right_bumper
+            Button.left_bumper -> it.left_bumper
+            Button.dpad_up -> it.dpad_up
+            Button.dpad_down -> it.dpad_down
+            Button.dpad_left -> it.dpad_left
+            Button.dpad_right -> it.dpad_right
+            Button.share -> it.share
+            Button.option -> it.options
+            Button.guide -> it.guide
+            Button.left_stick_button -> it.left_stick_button
+            Button.right_stick_button -> it.right_stick_button
+            Button.left_trigger -> handleActuatedTrigger(
+                Button.left_trigger,
+                it.left_trigger.toDouble()
+            )
+
+            Button.right_trigger -> handleActuatedTrigger(
+                Button.right_trigger,
+                it.right_trigger.toDouble()
+            )
+        }
+    } ?: false
 
     private val buttonLastStates: ExhaustiveEnumMap<Button, Boolean> = exhaustiveEnumMap { false }
-    private val buttonCurrentStates: ExhaustiveEnumMap<Button, Boolean> = exhaustiveEnumMap { false }
+    private val buttonCurrentStates: ExhaustiveEnumMap<Button, Boolean> =
+        exhaustiveEnumMap { false }
 
     private fun updatePressStates() {
         Button.entries.forEach {
@@ -191,7 +213,7 @@ class GamepadBinder(
     }
 
     private fun handlePressBinds() {
-        Button.entries.forEach {  button ->
+        Button.entries.forEach { button ->
             val pressed = buttonCurrentStates[button] && !buttonLastStates[button]
             if (pressed) {
                 pressBinds[button].forEach { it.start() }
@@ -200,7 +222,7 @@ class GamepadBinder(
     }
 
     private fun handleReleaseBinds() {
-        Button.entries.forEach {  button ->
+        Button.entries.forEach { button ->
             val released = !buttonCurrentStates[button] && buttonLastStates[button]
             if (released) {
                 releaseBinds[button].forEach { it.start() }

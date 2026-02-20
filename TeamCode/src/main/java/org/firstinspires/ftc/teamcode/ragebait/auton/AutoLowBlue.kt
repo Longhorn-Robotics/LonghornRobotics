@@ -26,10 +26,10 @@ open class AutoLowBlue : OpMode() {
     open val scorePose = Pose(60.984, 13.732, Math.toRadians(118.0))
     open val endPose = Pose(38.598, 10.000, Math.toRadians(90.0))
 
-    val pathTimer = ElapsedTime();
-    val opmodeTimer = ElapsedTime();
-    val pidElapsedTime = ElapsedTime();
-    val scoringTimer = ElapsedTime();
+    val pathTimer = ElapsedTime()
+    val opmodeTimer = ElapsedTime()
+    val pidElapsedTime = ElapsedTime()
+    val scoringTimer = ElapsedTime()
     val kickerElapsedTime = ElapsedTime()
 
 
@@ -47,15 +47,15 @@ open class AutoLowBlue : OpMode() {
 
     override fun loop() {
         // These loop the movements of the robot, these must be called continuously in order to work
-        follower.update();
-        autonomousPathUpdate();
+        follower.update()
+        autonomousPathUpdate()
 
         // Feedback to Driver Hub for debugging
-        telemetry.addData("path state", pathState);
-        telemetry.addData("x", follower.pose.x);
-        telemetry.addData("y", follower.pose.y);
-        telemetry.addData("heading", follower.pose.heading);
-        telemetry.update();
+        telemetry.addData("path state", pathState)
+        telemetry.addData("x", follower.pose.x)
+        telemetry.addData("y", follower.pose.y)
+        telemetry.addData("heading", follower.pose.heading)
+        telemetry.update()
 
     }
 

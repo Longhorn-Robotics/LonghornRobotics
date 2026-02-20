@@ -2,21 +2,17 @@ package org.firstinspires.ftc.teamcode.ragebait.teleop
 
 import com.bylazar.telemetry.PanelsTelemetry
 import com.bylazar.telemetry.TelemetryManager
-import com.pedropathing.follower.Follower
-import com.pedropathing.ftc.localization.constants.ThreeWheelConstants
 import com.pedropathing.geometry.Pose
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.ragebait.auton.HybridLocalizer
 import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareLite
-import org.firstinspires.ftc.teamcode.ragebait.hardware.RobotHardwareYousef
 import org.firstinspires.ftc.teamcode.ragebait.utils.ButtonAction
-import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
 
 @TeleOp(name = "TeleopLite", group = "Testing")
+@Suppress("unused")
 class TeleopLite : OpMode() {
     var robot: RobotHardwareLite = RobotHardwareLite()
     //var robot: RobotHardwareYousef = RobotHardwareYousef()

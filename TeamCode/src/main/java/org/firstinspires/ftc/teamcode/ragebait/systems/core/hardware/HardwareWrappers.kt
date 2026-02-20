@@ -14,10 +14,15 @@ import java.lang.NullPointerException
 
 // We can safely assume everything is DcMotorEx because all legal FTC motors support it
 
+@Suppress("unused")
 class MotorEncoder(val name: String) {
-    private val realMotor: DcMotorEx by lazy {
-        SubSystem.getHardware(name)
-    }
+    var cache: DcMotorEx? = null
+
+    // Again, we can throw from the safety of being inside an opMode
+    val realMotor: DcMotorEx
+        get() = cache
+            ?: SubSystem.getHardwareStrict<DcMotorEx>(name)?.also{ cache = it }
+            ?: throw NullPointerException("Couldn't get motor $name")
 
     val targetPositionTolerance: Int
         get() = realMotor.targetPositionTolerance
@@ -42,10 +47,16 @@ class MotorEncoder(val name: String) {
         get() = realMotor.power
 }
 
+@Suppress("unused")
 class Motor(val name: String) {
-    private val realMotor: DcMotorEx by lazy {
-        SubSystem.getHardwareStrict(name) ?: throw NullPointerException("Hardware is already reserved")
-    }
+
+    var cache: DcMotorEx? = null
+
+    // Again, we can throw from the safety of being inside an opMode
+    val realMotor: DcMotorEx
+        get() = cache
+            ?: SubSystem.getHardwareStrict<DcMotorEx>(name)?.also{ cache = it }
+            ?: throw NullPointerException("Couldn't get motor $name")
 
     var motorEnabled: Boolean
         set(v) { if (v) {realMotor.setMotorEnable()} else {realMotor.setMotorDisable()} }
@@ -102,14 +113,15 @@ class Motor(val name: String) {
     fun close() = realMotor.close()
 }
 
+@Suppress("unused")
 class Servo(val name: String) {
     val realServo: hardwareServo by lazy {
         SubSystem.getHardwareStrict(name) ?: throw NullPointerException("Hardware is already reserved")
     }
 
     companion object {
-        val MAX_POSITION: Double = hardwareServo.MAX_POSITION
-        val MIN_POSITION: Double = hardwareServo.MIN_POSITION
+        const val MAX_POSITION: Double = hardwareServo.MAX_POSITION
+        const val MIN_POSITION: Double = hardwareServo.MIN_POSITION
     }
 
     val controller: ServoController by lazy { realServo.controller }

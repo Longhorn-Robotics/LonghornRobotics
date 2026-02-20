@@ -38,6 +38,7 @@ import java.util.List;
 public class Tuning extends SelectableOpMode {
     public static Follower follower;
 
+    @SuppressWarnings("unused")
     @IgnoreConfigurable
     static PoseHistory poseHistory;
 
@@ -45,8 +46,9 @@ public class Tuning extends SelectableOpMode {
     static TelemetryManager telemetryM;
 
     @IgnoreConfigurable
-    static ArrayList<String> changes = new ArrayList<>();
+    static final ArrayList<String> changes = new ArrayList<>();
 
+    @SuppressWarnings("unused")
     public Tuning() {
         super("Select a Tuning OpMode", s -> {
             s.folder("Localization", l -> {
@@ -80,7 +82,7 @@ public class Tuning extends SelectableOpMode {
     public void onSelect() {
         if (follower == null) {
             follower = Constants.createFollower(hardwareMap);
-            PanelsConfigurables.INSTANCE.refreshClass(this);
+            PanelsConfigurables.refreshClass(Tuning.class);
         } else {
             follower = Constants.createFollower(hardwareMap);
         }
@@ -126,6 +128,7 @@ public class Tuning extends SelectableOpMode {
  * @author Baron Henderson - 20077 The Indubitables
  * @version 1.0, 5/6/2024
  */
+@SuppressWarnings("unused")
 class LocalizationTest extends OpMode {
     @Override
     public void init() {
@@ -180,8 +183,9 @@ class LocalizationTest extends OpMode {
  * @author Baron Henderson - 20077 The Indubitables
  * @version 1.0, 5/6/2024
  */
+@SuppressWarnings("unused")
 class ForwardTuner extends OpMode {
-    public static double DISTANCE = 48;
+    public static final double DISTANCE = 48;
 
     @Override
     public void init() {
@@ -228,8 +232,9 @@ class ForwardTuner extends OpMode {
  * @author Baron Henderson - 20077 The Indubitables
  * @version 2.0, 6/26/2025
  */
+@SuppressWarnings("unused")
 class LateralTuner extends OpMode {
-    public static double DISTANCE = 48;
+    public static final double DISTANCE = 48;
 
     @Override
     public void init() {
@@ -276,8 +281,9 @@ class LateralTuner extends OpMode {
  * @author Baron Henderson - 20077 The Indubitables
  * @version 1.0, 5/6/2024
  */
+@SuppressWarnings("unused")
 class TurnTuner extends OpMode {
-    public static double ANGLE = 2 * Math.PI;
+    public static final double ANGLE = 2 * Math.PI;
 
     @Override
     public void init() {
@@ -327,10 +333,11 @@ class TurnTuner extends OpMode {
  * @author Baron Henderson - 20077 The Indubitables
  * @version 1.0, 3/13/2024
  */
+@SuppressWarnings("unused")
 class ForwardVelocityTuner extends OpMode {
     private final ArrayList<Double> velocities = new ArrayList<>();
-    public static double DISTANCE = 48;
-    public static double RECORD_NUMBER = 10;
+    public static final double DISTANCE = 48;
+    public static final double RECORD_NUMBER = 10;
 
     private boolean end;
 
@@ -433,11 +440,12 @@ class ForwardVelocityTuner extends OpMode {
  * @author Baron Henderson - 20077 The Indubitables
  * @version 1.0, 3/13/2024
  */
+@SuppressWarnings("unused")
 class LateralVelocityTuner extends OpMode {
     private final ArrayList<Double> velocities = new ArrayList<>();
 
-    public static double DISTANCE = 48;
-    public static double RECORD_NUMBER = 10;
+    public static final double DISTANCE = 48;
+    public static final double RECORD_NUMBER = 10;
 
     private boolean end;
 
@@ -534,9 +542,10 @@ class LateralVelocityTuner extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/13/2024
  */
+@SuppressWarnings("unused")
 class ForwardZeroPowerAccelerationTuner extends OpMode {
     private final ArrayList<Double> accelerations = new ArrayList<>();
-    public static double VELOCITY = 30;
+    public static final double VELOCITY = 30;
 
     private double previousVelocity;
     private long previousTimeNano;
@@ -640,9 +649,10 @@ class ForwardZeroPowerAccelerationTuner extends OpMode {
  * @author Baron Henderson - 20077 The Indubitables
  * @version 1.0, 3/13/2024
  */
+@SuppressWarnings("unused")
 class LateralZeroPowerAccelerationTuner extends OpMode {
     private final ArrayList<Double> accelerations = new ArrayList<>();
-    public static double VELOCITY = 30;
+    public static final double VELOCITY = 30;
     private double previousVelocity;
     private long previousTimeNano;
     private boolean stopping;
@@ -739,8 +749,9 @@ class LateralZeroPowerAccelerationTuner extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
+@SuppressWarnings("unused")
 class TranslationalTuner extends OpMode {
-    public static double DISTANCE = 40;
+    public static final double DISTANCE = 40;
     private boolean forward = true;
 
     private Path forwards;
@@ -809,8 +820,9 @@ class TranslationalTuner extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
+@SuppressWarnings("unused")
 class HeadingTuner extends OpMode {
-    public static double DISTANCE = 40;
+    public static final double DISTANCE = 40;
     private boolean forward = true;
 
     private Path forwards;
@@ -879,8 +891,9 @@ class HeadingTuner extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
+@SuppressWarnings("unused")
 class DriveTuner extends OpMode {
-    public static double DISTANCE = 40;
+    public static final double DISTANCE = 40;
     private boolean forward = true;
 
     private PathChain forwards;
@@ -959,8 +972,9 @@ class DriveTuner extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
+@SuppressWarnings("unused")
 class Line extends OpMode {
-    public static double DISTANCE = 40;
+    public static final double DISTANCE = 40;
     private boolean forward = true;
 
     private Path forwards;
@@ -1026,8 +1040,9 @@ class Line extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/13/2024
  */
+@SuppressWarnings("unused")
 class CentripetalTuner extends OpMode {
-    public static double DISTANCE = 20;
+    public static final double DISTANCE = 20;
     private boolean forward = true;
 
     private Path forwards;
@@ -1095,6 +1110,7 @@ class CentripetalTuner extends OpMode {
  * @author Samarth Mahapatra - 1002 CircuitRunners Robotics Surge
  * @version 1.0, 12/30/2024
  */
+@SuppressWarnings("unused")
 class Triangle extends OpMode {
 
     private final Pose startPose = new Pose(72, 72, Math.toRadians(0));
@@ -1160,8 +1176,9 @@ class Triangle extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
+@SuppressWarnings("unused")
 class Circle extends OpMode {
-    public static double RADIUS = 10;
+    public static final double RADIUS = 10;
     private PathChain circle;
 
     public void start() {
@@ -1214,6 +1231,7 @@ class Circle extends OpMode {
  * @author Lazar - 19234
  * @version 1.1, 5/19/2025
  */
+@SuppressWarnings("unused")
 class Drawing {
     public static final double ROBOT_RADIUS = 9; // woah
     private static final FieldManager panelsField = PanelsField.INSTANCE.getField();
