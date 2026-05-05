@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.ragebait.systems.core.SubSystem
 
 @Suppress("unused")
 @TeleOp(name = "TestOp", group = "pushbot")
-class SubsysTest : SubsystemTeleop() {
+class SubsysTest : SubsystemOpmode() {
     class SysA : SubSystem() {
         override fun init() {
             opMode.telemetry.addLine("Initializing sysA")
@@ -29,7 +29,7 @@ class SubsysTest : SubsystemTeleop() {
     }
 
     class SysB : SubSystem() {
-        val aRef: SysA by DependencyCell(this)
+        val aRef: SysA by DependencyCell()
         override fun init() {
             opMode.telemetry.addLine("Initializing sysB")
             opMode.telemetry.addLine("Got A: $aRef")
@@ -49,7 +49,7 @@ class SubsysTest : SubsystemTeleop() {
     }
 
     class SysC : SubSystem() {
-        val aRef: SysA by DependencyCell(this)
+        val aRef: SysA by DependencyCell()
         override fun init() {
             opMode.telemetry.addLine("Initializing sysC")
             opMode.telemetry.addLine("Got A: $aRef")
@@ -69,7 +69,7 @@ class SubsysTest : SubsystemTeleop() {
     }
 
     class SysD : SubSystem() {
-        val cRef: SysC by DependencyCell(this)
+        val cRef: SysC by DependencyCell()
         override fun init() {
             opMode.telemetry.addLine("Initializing sysD")
             opMode.telemetry.addLine("Got C: $cRef")

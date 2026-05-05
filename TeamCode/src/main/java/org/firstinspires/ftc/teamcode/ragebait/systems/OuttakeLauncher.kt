@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.ragebait.systems.core.SubSystem
 @Suppress("unused")
 class OuttakeLauncher() : SubSystem() {
 
-    val localizer: PedroPathingLocalizer by DependencyCell(this)
+    val localizer: PedroPathingLocalizer by DependencyCell()
 
     override fun init() {
     }
