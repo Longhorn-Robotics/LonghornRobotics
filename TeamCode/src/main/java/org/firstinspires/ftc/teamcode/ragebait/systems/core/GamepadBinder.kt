@@ -7,11 +7,17 @@ import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.EnumBucket
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.ExhaustiveEnumMap
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.enumBucket
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.utils.exhaustiveEnumMap
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.reflect.KMutableProperty0
 
 class GamepadBinder(
     // This is a closure to support hot-reloading gamepads, reconnecting mid-opmode, e.t.c.
     var gamepad: () -> Gamepad?
 ) {
+    /**
+     * Both true digital buttons and "fake" analog-debounce buttons
+     */
     @Suppress("EnumEntryName")
     enum class Button {
         cross,
@@ -125,6 +131,56 @@ class GamepadBinder(
         processor: (Double) -> Double = { it }
     ) {
         analogBinds[analog].add(Pair(consumer, processor))
+    }
+
+    private val stepperVals = ArrayList<Double>()
+
+    /**
+     * A very common binding pattern: A stepper between different values.
+     * Handles the max and min behaviour for you.
+     */
+    fun bindStepper(
+        positive: Button,
+        negative: Button,
+        step: Double,
+        maxVal: Double,
+        minVal: Double,
+        consumer: (Double) -> Unit,
+        initial: Double? = null
+    ) {
+        val stepperNum = stepperVals.size
+        stepperVals.add(initial ?: ((maxVal + minVal) / 2))
+        bindButtonPress(positive, ActionBuilder.simple("Stepper Positive $stepperNum") {
+            stepperVals[stepperNum] = min(stepperVals[stepperNum] + step, maxVal);
+            consumer(stepperVals[stepperNum]);
+        } )
+        bindButtonPress(negative, ActionBuilder.simple("Stepper Negative $stepperNum") {
+            stepperVals[stepperNum] = max(stepperVals[stepperNum] - step, minVal);
+            consumer(stepperVals[stepperNum]);
+        } )
+    }
+
+
+    private val sweeperVals = ArrayList<Double>();
+
+    /**
+     * A very common binding pattern: A sweeper between different values, using an analog axis.
+     * Handles the max and min behaviour for you.
+     */
+    fun bindSweeper(
+        axis: Analog,
+        sensitivity: Double,
+        maxVal: Double,
+        minVal: Double,
+        consumer: (Double) -> Unit,
+        initial: Double? = null,
+    ) {
+        val sweeperNum = sweeperVals.size;
+        sweeperVals.add(initial ?: ((maxVal + minVal) / 2))
+        bindAnalog(axis, {
+            sweeperVals[sweeperNum] += max(min(maxVal, sweeperVals[sweeperNum] + it * sensitivity), minVal);
+            consumer(sweeperVals[sweeperNum]);
+        })
     }
 
     private val triggerActuationValue = 0.6

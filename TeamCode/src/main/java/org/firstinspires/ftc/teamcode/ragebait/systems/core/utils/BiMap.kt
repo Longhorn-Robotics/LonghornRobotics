@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.ragebait.systems.core.utils
 
 /**
- * A bijective map interface that allows for a one-to-one mapping between keys and values.
+ * A bidirectional map interface that allows for a one-to-one mapping between keys and values.
  * This interface provides methods to put, get, invert, check existence, remove entries,
  * and retrieve the forward and reverse maps.
  *
