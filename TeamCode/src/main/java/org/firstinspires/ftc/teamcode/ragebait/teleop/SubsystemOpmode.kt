@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.ragebait.systems.core.Action
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.GamepadBinder
 import org.firstinspires.ftc.teamcode.ragebait.systems.core.SubSystem
 
-open class SubsystemTeleop : OpMode() {
+open class SubsystemOpmode : OpMode() {
     val bindings1 = GamepadBinder{gamepad1}
     val bindings2 = GamepadBinder{gamepad2}
 
@@ -19,14 +19,14 @@ open class SubsystemTeleop : OpMode() {
         SubSystem.defaultOpMode = this
     }
 
-    override fun init() {
+    final override fun init() {
         hubs.forEach { it.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL }
         SubSystem.doInitializations()
         gamepad1 ?: telemetry.addLine("WARNING: No gamepad 1")
         gamepad2 ?: telemetry.addLine("WARNING: No gamepad 2")
     }
 
-    override fun loop() {
+    final override fun loop() {
         hubs.forEach { it.clearBulkCache() }
         bindings1.loop()
         bindings2.loop()
@@ -34,7 +34,7 @@ open class SubsystemTeleop : OpMode() {
         SubSystem.doLoops()
     }
 
-    override fun stop() {
+    final override fun stop() {
         SubSystem.doStops()
     }
 }

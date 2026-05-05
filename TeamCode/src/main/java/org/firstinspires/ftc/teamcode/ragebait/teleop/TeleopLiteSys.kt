@@ -31,7 +31,7 @@ class MotorTest(motorNames: Array<String>) : SubSystem() {
 
 @Suppress("unused")
 @TeleOp(name = "LiteSys", group = "Testing")
-class TeleopLiteSys : SubsystemTeleop() {
+class TeleopLiteSys : SubsystemOpmode() {
     val motorSys = MotorTest(arrayOf("motor1", "motor2"))
 
     init {

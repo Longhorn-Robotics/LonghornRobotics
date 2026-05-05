@@ -9,7 +9,14 @@ abstract class SubSystem {
     // # STATICS ARE NOT CLEARED BETWEEN RUNNING OPMODES
     companion object {
 
-        // TODO: Make a real error type
+        // TODO: Make a real error type.
+        // I'd really like to extend the error system with additional information.
+        // Maybe some way of tracking stack frames, the time of the error, and a better error
+        // display. The limitations of the driver hub telemetry is a granted, but maybe once FTC
+        // panels matures some more we could integrate a custom panels plugin.
+        /**
+         * A log of the current errors in the opmode run cycle.
+         */
         var errorLog: ArrayList<String> = arrayListOf()
         fun pushError(message: String) {
             errorLog.add(message)
@@ -18,7 +25,15 @@ abstract class SubSystem {
 
         // The vision: prints out the errors to a set line count, and temporally old errors stop
         // getting printed
+        /**
+         * The maximum amount of errors to display on the telemetry screen.
+         */
         const val MAX_WORDS_LOGGED = 5
+
+        /**
+         * We run this before anything else in the opmode to ensure it's consistently at the top
+         * of the screen.
+         */
         private fun logErrors() {
             val toLog = errorLog.takeLast(MAX_WORDS_LOGGED)
             if (toLog.isNotEmpty()) {
@@ -43,11 +58,30 @@ abstract class SubSystem {
             }
         }
 
+        /**
+         * We only ever expect to run one opmode at a time, so this is fine.
+         */
         var defaultOpMode: OpMode? = null
+
+        /**
+         * Common wrapper for err-safe opmode access
+         */
         inline fun <R> withOpMode(block: (OpMode) -> R): R? =
             defaultOpMode.withErr("OpMode not registered!", block)
 
+        /**
+         * Subsystem uses a method of hardware safety where individual subsystems can reserve
+         * certain hardware components, while allowing unmodifying access to all.
+         *
+         * TODO: Make sure that the simple hardwaremap string is actually a universal way of identifying hardware components
+         */
         val reservedHardware = mutableSetOf<String>()
+
+        /**
+         * Gets a hardware element while reserving it. Note, this should only be called once; it
+         * permanently reserves the hardware. Callers should save it, or better yet, use one
+         * of the hardware wrapper classes.
+         */
         inline fun <reified T : Any> getHardwareStrict(name: String): T? =
             if (name in reservedHardware) {
                 pushError("Hardware $name already reserved"); null
@@ -65,7 +99,7 @@ abstract class SubSystem {
         val systemEnumeration = BiMap<SubSystem, Int>()
         val systemClassMap = BiMap<KClass<out SubSystem>, SubSystem>()
 
-        // Systems that have failed, crashed, or are missing dependencies that are
+        // Systems that have failed, crashed, or have missing/poisoned dependencies
         val poisonedSystems = BiMap<Int, Boolean>()
         val depLinks: MutableMap<SubSystem, MutableSet<KClass<out SubSystem>>> = mutableMapOf()
 
@@ -99,7 +133,8 @@ abstract class SubSystem {
         fun doInitializations() {
 
             val graph = constructDependencyGraph()
-            // Deep copies to save this for later
+            // Deep copies to save this for later, we modify the graph matrix itself while sorting
+            // the subsystems
             depGraph = Array(systemCount) { graph[it].clone() }
 
             // Uses Kahn's topological sort algorithm
@@ -112,7 +147,7 @@ abstract class SubSystem {
             while (freeNodes.isNotEmpty()) {
                 val current = freeNodes.removeFirst()
                 initList.add(current)
-                (0..<systemCount).filter { graph[it][current] == 1 }.forEach {
+                (0..systemCount).filter { graph[it][current] == 1 }.forEach {
                     graph[it][current] = 0
                     edgeCounts[it]--
                     if (edgeCounts[it] == 0) {
@@ -205,8 +240,12 @@ abstract class SubSystem {
         }
 
 
+        /**
+         * Executes a function on all the systems, doing poisoning them correctly when an exception
+         * occurs on a certain subsystem.
+         */
         private inline fun tryOnAllSys(err: String, block: (SubSystem, Int) -> Unit) {
-            for (orderIdx in (0..<systemCount)) {
+            for (orderIdx in (0..systemCount)) {
                 // We stay vigilant of a previous crash invalidating further elements in the update
                 // ordering.
                 val (sys, idx) = if (orderIdx < updateOrder.size) updateOrder[orderIdx] else break;
@@ -216,22 +255,31 @@ abstract class SubSystem {
                     block(sys, idx)
                 } ?: run {
                     propagatePoisoning(idx)
+                    // This is the ify part, we modify the list we're currently iterating over.
+                    // This is safe because the poisoning can only propogate and disable subsystems
+                    // further down the list, meaning that our current index always stays stable.
                     constructUpdateList()
                 }
             }
         }
 
+        /**
+         * Runs the loops of all the subsystems
+         */
         fun doLoops() {
             statusDisplay()
             tryOnAllSys("Failure during loop") { sys, _ -> sys.loop() }
         }
+        /**
+         * Runs the stops of all the subsystems
+         */
         fun doStops() {
             statusDisplay()
             tryOnAllSys("Failure during stop") { sys, _ -> sys.stop() }
         }
 
         @Suppress("unused")
-        inline fun <reified S : SubSystem, Ret> letSys(noinline block: (S) -> Ret): Ret? =
+        inline fun <reified S : SubSystem, Ret> letSys(block: (S) -> Ret): Ret? =
             letSys(S::class, block)
 
         @Suppress("UNCHECKED_CAST")
@@ -257,10 +305,10 @@ abstract class SubSystem {
         depLinks[this] = mutableSetOf()
     }
 
-    abstract fun init()
+    open fun init() {}
 
     //    fun init_loop()
 //    fun start()
-    abstract fun loop()
-    abstract fun stop()
+    open fun loop() {}
+    open fun stop() {}
 }
